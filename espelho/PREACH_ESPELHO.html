@@ -132,7 +132,7 @@ kbd{border:1px solid #252e39;border-bottom-color:#313b47;border-radius:6px;paddi
 .cv-quarter.cv-max .cv-frame{height:100%;width:100%;max-width:none;aspect-ratio:auto;flex:1 1 auto}
 .cv-quarter.cv-max #cvPrev{left:14px}
 .cv-quarter.cv-max #cvNext{right:14px}
-.cv-laser{position:absolute;left:50%;top:50%;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#ff2d46 40%,rgba(255,45,70,.5) 64%,rgba(255,45,70,0) 78%);box-shadow:0 0 16px 7px rgba(255,45,70,.5);transform:translate(-50%,-50%);pointer-events:none;z-index:6;opacity:0;transition:opacity .16s ease}
+.cv-laser{position:absolute;left:0;top:0;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#ff2d46 40%,rgba(255,45,70,.5) 64%,rgba(255,45,70,0) 78%);box-shadow:0 0 16px 7px rgba(255,45,70,.5);transform:translate3d(-9999px,-9999px,0);pointer-events:none;z-index:6;opacity:0;transition:transform .07s cubic-bezier(.25,.9,.35,1),opacity .16s ease;will-change:transform,opacity}
 .cv-laser.on{opacity:1}
 .cv-pad{position:fixed;left:0;right:0;bottom:0;height:20vh;z-index:145;background:linear-gradient(180deg,#0a0e14,#06080c);border-top:1px solid #232c39;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair;box-shadow:0 -14px 40px rgba(0,0,0,.55)}
 .cv-pad-off{display:none!important}
@@ -527,7 +527,7 @@ function flush(){
   const changed=Array.from(pending);
   pending=null;
   send('state',{seq:++mySeq,changed:changed,state:JSON.parse(JSON.stringify(S))});
-  scheduleRetain();
+  if(!(changed.length===1&&changed[0]==='laser'))scheduleRetain();
 }
 function scheduleRetain(){
   if(retainTimer)return;
@@ -810,7 +810,7 @@ function canvaClose(){
   toast('apresentação fechada');
   log('cmd','canva fechado');
 }
-let laserHideTimer=0,laserSig='';
+let laserHideTimer=0,laserSig='',laserRaf=0;
 function laserMove(nx,ny){
   if(role!=='controle')return;
   if(!canvaState().url)return;
@@ -833,6 +833,7 @@ function renderLaser(){
   const dot=$('cvLaser');
   if(!dot)return;
   const on=!!(S.laser&&S.laser.on)&&!!canvaState().url;
+  const wasOn=dot.classList.contains('on');
   dot.classList.toggle('on',on);
   const pad=$('cvPad');
   if(pad)pad.classList.toggle('cv-pad-on',on&&role==='controle');
@@ -840,8 +841,20 @@ function renderLaser(){
   const moved=sig!==laserSig;
   laserSig=sig;
   if(on){
-    dot.style.left=(S.laser.x*100).toFixed(2)+'%';
-    dot.style.top=(S.laser.y*100).toFixed(2)+'%';
+    if(!laserRaf)laserRaf=requestAnimationFrame(()=>{
+      laserRaf=0;
+      const d=$('cvLaser'),box=$('cvBox');
+      if(!d||!box)return;
+      const w=box.clientWidth,h=box.clientHeight;
+      if(!w||!h)return;
+      const t='translate3d('+(S.laser.x*w).toFixed(1)+'px,'+(S.laser.y*h).toFixed(1)+'px,0) translate(-50%,-50%)';
+      if(!wasOn){
+        d.style.transition='none';
+        d.style.transform=t;
+        void d.offsetWidth;
+        d.style.transition='';
+      }else d.style.transform=t;
+    });
     if(moved){
       if(laserHideTimer)clearTimeout(laserHideTimer);
       laserHideTimer=setTimeout(laserOff,5200);
@@ -949,6 +962,11 @@ function showApp(){
   $('chooser').classList.add('hidden');
   $('app').classList.remove('hidden');
   $('modeBadge').textContent=role==='palco'?'PALCO':'CONTROLE';
+  const lzDot=$('cvLaser');
+  if(lzDot){
+    if(role==='palco'){lzDot.style.width='15.75px';lzDot.style.height='15.75px';lzDot.style.boxShadow='0 0 16.8px 7.35px rgba(255,45,70,.5)'}
+    else{lzDot.style.width='';lzDot.style.height='';lzDot.style.boxShadow=''}
+  }
   $('codeCard').classList.toggle('hidden',role!=='palco');
   $('mirrorNote').textContent=role==='palco'
     ?'ATENÇÃO: este palco é só espelho — não tem som. Para tocar, abra o PREACH_FLOW_V10_ESPELHO.html no PC (ele gera outro código) e use o celular só como controle.'
