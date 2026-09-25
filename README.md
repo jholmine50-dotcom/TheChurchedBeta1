@@ -8,6 +8,7 @@ PREACH FLOW — apresentação com espelho PC ↔ celular (o PC toca o áudio, o
 2. **Celular:** abra o site abaixo, digite o código e toque em **ENTRAR NA SALA**.
 3. No celular aparece o CONTROLE (TOCAR, STOP, intensidade, fala, faixas); o PC executa e o áudio sai dele.
 4. **Slides do Canva:** cole o link de qualquer apresentação em **APRESENTAÇÃO CANVA** (no PC ou no celular). Ela abre em **tela cheia no palco** e no **1/4 superior no controle**, com as setinhas **← →** para passar os slides dos dois lados.
+5. **Laser:** no celular, um **trackpad** ocupa 1/5 inferior da tela — passe o dedo e um ponteiro vermelho aparece no slide e no palco (some sozinho após 5 s parado); no PC, basta mover o mouse sobre o slide. No controle do PC, o botão **MAX** deixa o slide em tela inteira.
 
 ## Site (GitHub Pages)
 

@@ -126,6 +126,21 @@ kbd{border:1px solid #252e39;border-bottom-color:#313b47;border-radius:6px;paddi
 .cv-quarter .cv-frame{height:100%;aspect-ratio:16/9;max-width:100%}
 .cv-quarter #cvPrev{left:9px}
 .cv-quarter #cvNext{right:9px}
+.cv-max{position:absolute;top:10px;left:12px;z-index:4;min-width:46px;height:32px;border-radius:10px;border:1px solid #2b3644;background:rgba(8,11,16,.88);color:#eaf3ff;font-size:11px;font-weight:950;letter-spacing:1.4px;cursor:pointer;padding:0 10px;font-family:inherit}
+.cv-max:hover{background:#141c27}
+.cv-quarter.cv-max{top:0;left:0;width:100vw;height:100vh;min-height:0;padding:0;background:rgba(3,5,8,.985)}
+.cv-quarter.cv-max .cv-frame{height:100%;width:100%;max-width:none;aspect-ratio:auto;flex:1 1 auto}
+.cv-quarter.cv-max #cvPrev{left:14px}
+.cv-quarter.cv-max #cvNext{right:14px}
+.cv-laser{position:absolute;left:50%;top:50%;width:15px;height:15px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#ff2d46 40%,rgba(255,45,70,.5) 64%,rgba(255,45,70,0) 78%);box-shadow:0 0 16px 7px rgba(255,45,70,.5);transform:translate(-50%,-50%);pointer-events:none;z-index:6;opacity:0;transition:opacity .16s ease}
+.cv-laser.on{opacity:1}
+.cv-pad{position:fixed;left:0;right:0;bottom:0;height:20vh;z-index:145;background:linear-gradient(180deg,#0a0e14,#06080c);border-top:1px solid #232c39;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair;box-shadow:0 -14px 40px rgba(0,0,0,.55)}
+.cv-pad-off{display:none!important}
+.cv-pad-t{font-size:10px;letter-spacing:3.4px;font-weight:950;color:#5f6d7d}
+.cv-pad-h{font-size:11px;color:#46525f;text-align:center;padding:0 18px;line-height:1.5}
+.cv-pad.cv-pad-on{border-top-color:#ff2d46;box-shadow:0 -14px 40px rgba(0,0,0,.55),0 0 26px rgba(255,45,70,.35)}
+.cv-pad.cv-pad-on .cv-pad-t{color:#ff6b7d}
+.cv-pad.cv-pad-on .cv-pad-h{color:#7a4a52}
 @media(max-width:700px){.cv-quarter{padding:6px 48px;min-height:132px}.cv-arrow{width:36px;height:54px;font-size:26px}.cv-close{top:7px;right:8px}}
 @media(max-width:900px){.grid-top,.grid2{grid-template-columns:1fr}.sets{grid-template-columns:1fr}.cards2{grid-template-columns:1fr}}
 @media(max-width:700px){main,header{padding-left:14px;padding-right:14px}.card{padding:16px;border-radius:18px}.bignum span{font-size:52px}.big-code{font-size:24px;letter-spacing:4px}.scene{font-size:26px}.rowbtns button{min-width:calc(50% - 5px)}footer{flex-direction:column}}
@@ -274,10 +289,16 @@ kbd{border:1px solid #252e39;border-bottom-color:#313b47;border-radius:6px;paddi
 
 <div id="cvStage" class="cv-stage cv-off">
   <button class="cv-arrow" id="cvPrev" type="button" aria-label="slide anterior">‹</button>
-  <div class="cv-frame"><iframe id="cvFrame" title="Apresentação Canva" allow="autoplay; fullscreen" allowfullscreen></iframe></div>
+  <div class="cv-frame" id="cvBox"><iframe id="cvFrame" title="Apresentação Canva" allow="autoplay; fullscreen" allowfullscreen></iframe><span id="cvLaser" class="cv-laser"></span></div>
   <button class="cv-arrow" id="cvNext" type="button" aria-label="próximo slide">›</button>
   <div id="cvPage" class="cv-page">slide 1</div>
   <button class="cv-close" id="cvClose" type="button" aria-label="fechar apresentação">×</button>
+  <button class="cv-max" id="cvMax" type="button" aria-label="aumentar slide no controle">MAX</button>
+</div>
+
+<div id="cvPad" class="cv-pad cv-pad-off">
+  <span class="cv-pad-t">TRACKPAD</span>
+  <span class="cv-pad-h">arraste o dedo aqui para apontar o laser no slide</span>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -287,7 +308,7 @@ kbd{border:1px solid #252e39;border-bottom-color:#313b47;border-radius:6px;paddi
 const TRACKS=[['Backing_Vocals','vocais'],['Drums','bateria'],['Bass','baixo'],['Keyboard','teclas'],['Percussion','percussão'],['Strings','cordas'],['Synth','sintetizador'],['FX','efeitos'],['Brass','metais'],['Woodwinds','sopros']];
 const SETS=[['original','Original','10 camadas'],['oceans','Agnus Dei','9 camadas'],['forte','Oração Forte','9 camadas']];
 const INTENTS=[[0,'SUAVE','espaçoso e discreto'],[25,'REFLEXIVO','íntimo e contemplativo'],[50,'PRESENTE','fundo sustentando a fala'],[72,'TENSÃO','construindo expectativa'],[100,'CLÍMAX','máxima expressão']];
-const DEFAULT={expr:50,master:24,duck:false,loop:false,playing:false,set:'original',pos:0,muted:[],action:null,canva:{url:'',page:1}};
+const DEFAULT={expr:50,master:24,duck:false,loop:false,playing:false,set:'original',pos:0,muted:[],action:null,canva:{url:'',page:1},laser:{on:false,x:.5,y:.5}};
 const ALPHABET='23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 
 //__MQTT_START__
@@ -540,6 +561,7 @@ function handle(msg){
       toast('ação recebida: '+String(S.action.n).toUpperCase());
       log('cmd','ação ' +S.action.n+' veio do outro lado');
     }
+    if(touched.length===1&&touched[0]==='laser'){renderLaser();return}
     save();render();
     if(touched.indexOf('expr')>=0)log('sync','intensidade → '+S.expr+'%');
     return;
@@ -585,6 +607,7 @@ function load(){
       }
     }
   }catch(e){}
+  S.laser={on:false,x:.5,y:.5};
   if(S.action&&S.action.s)toastSeen=S.action.s;
 }
 function startTransport(){
@@ -787,6 +810,56 @@ function canvaClose(){
   toast('apresentação fechada');
   log('cmd','canva fechado');
 }
+let laserHideTimer=0,laserSig='';
+function laserMove(nx,ny){
+  if(role!=='controle')return;
+  if(!canvaState().url)return;
+  nx=Math.max(0,Math.min(1,nx));
+  ny=Math.max(0,Math.min(1,ny));
+  const cur=S.laser||{};
+  if(cur.on&&Math.abs(cur.x-nx)<0.0015&&Math.abs(cur.y-ny)<0.0015)return;
+  S.laser={on:true,x:nx,y:ny};
+  commit(['laser']);
+  renderLaser();
+}
+function laserOff(){
+  laserHideTimer=0;
+  if(!S.laser||!S.laser.on)return;
+  S.laser={on:false,x:S.laser.x,y:S.laser.y};
+  commit(['laser'],true);
+  renderLaser();
+}
+function renderLaser(){
+  const dot=$('cvLaser');
+  if(!dot)return;
+  const on=!!(S.laser&&S.laser.on)&&!!canvaState().url;
+  dot.classList.toggle('on',on);
+  const pad=$('cvPad');
+  if(pad)pad.classList.toggle('cv-pad-on',on&&role==='controle');
+  const sig=on?(+S.laser.x.toFixed(4)+'|'+(+S.laser.y.toFixed(4))):'';
+  const moved=sig!==laserSig;
+  laserSig=sig;
+  if(on){
+    dot.style.left=(S.laser.x*100).toFixed(2)+'%';
+    dot.style.top=(S.laser.y*100).toFixed(2)+'%';
+    if(moved){
+      if(laserHideTimer)clearTimeout(laserHideTimer);
+      laserHideTimer=setTimeout(laserOff,5200);
+    }
+  }else if(laserHideTimer){
+    clearTimeout(laserHideTimer);
+    laserHideTimer=0;
+  }
+}
+function canvaMax(){
+  const st=$('cvStage');
+  if(!st||!canvaState().url)return;
+  const on=!st.classList.contains('cv-max');
+  st.classList.toggle('cv-max',on);
+  const b=$('cvMax');
+  if(b)b.textContent=on?'MIN':'MAX';
+  log('cmd',on?'controle em tela inteira':'controle 1/4');
+}
 let cvWasOn=false;
 function renderCanva(){
   const st=$('cvStage');
@@ -794,10 +867,23 @@ function renderCanva(){
   const cs=canvaState();
   const on=!!cs.url;
   const app=$('app');
-  if(app)app.style.paddingTop=(!on||role==='palco')?'':'25vh';
+  const coarse=!!(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches)||
+    (typeof window.ontouchstart!=='undefined'&&window.screen&&window.screen.width<900);
+  const wantPad=on&&role==='controle'&&coarse;
+  const pad=$('cvPad');
+  if(pad)pad.classList.toggle('cv-pad-off',!wantPad);
+  const mx=$('cvMax');
+  if(mx)mx.style.display=role==='controle'?'':'none';
+  if(app){
+    app.style.paddingTop=(!on||role==='palco')?'':'25vh';
+    app.style.paddingBottom=wantPad?'20vh':'';
+  }
   if(on&&!cvWasOn&&role==='palco'&&typeof peToggle==='function')peToggle(false);
   cvWasOn=on;
   if(!on){
+    st.classList.remove('cv-max');
+    const mb=$('cvMax');
+    if(mb)mb.textContent='MAX';
     if(!st.classList.contains('cv-off')){
       st.classList.add('cv-off');
       const ifr=$('cvFrame');
@@ -823,7 +909,7 @@ function renderCanva(){
 }
 //__CANVA_END__
 function render(){
-  renderScene();renderFader();renderMaster();renderButtons();renderSets();renderChips();renderStatus();renderCanva();
+  renderScene();renderFader();renderMaster();renderButtons();renderSets();renderChips();renderStatus();renderCanva();renderLaser();
 }
 function buildLinks(){
   const base=location.origin+location.pathname;
@@ -928,6 +1014,28 @@ function wire(){
   $('cvNext').onclick=()=>canvaNav(1);
   $('cvPrev').onclick=()=>canvaNav(-1);
   $('cvClose').onclick=canvaClose;
+  $('cvMax').onclick=canvaMax;
+  const cvBox=$('cvBox');
+  if(cvBox)cvBox.addEventListener('mousemove',e=>{
+    if(role!=='controle')return;
+    const r=cvBox.getBoundingClientRect();
+    if(!r.width||!r.height)return;
+    laserMove((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height);
+  });
+  const cvPad=$('cvPad');
+  if(cvPad){
+    const at=(cx,cy)=>{
+      const r=cvPad.getBoundingClientRect();
+      if(!r.width||!r.height)return;
+      laserMove((cx-r.left)/r.width,(cy-r.top)/r.height);
+    };
+    let down=false;
+    cvPad.addEventListener('touchstart',e=>{e.preventDefault();const t=e.touches[0];if(t)at(t.clientX,t.clientY)},{passive:false});
+    cvPad.addEventListener('touchmove',e=>{e.preventDefault();const t=e.touches[0];if(t)at(t.clientX,t.clientY)},{passive:false});
+    cvPad.addEventListener('mousedown',e=>{down=true;at(e.clientX,e.clientY)});
+    window.addEventListener('mousemove',e=>{if(down)at(e.clientX,e.clientY)});
+    window.addEventListener('mouseup',()=>{down=false});
+  }
   const fader=$('fader');
   fader.addEventListener('input',()=>{
     S.expr=Math.max(0,Math.min(100,parseInt(fader.value,10)||0));
@@ -983,6 +1091,7 @@ function wire(){
       canvaNav(e.key==='ArrowRight'?1:-1);
       return;
     }
+    if(e.key==='Escape'){canvaMax();return}
     if(e.key==='f'||e.key==='F')$('fadeBtn').click();
   });
 }
