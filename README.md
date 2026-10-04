@@ -12,7 +12,8 @@ PREACH FLOW — apresentação com espelho PC ↔ celular (o PC toca o áudio, o
 
 ## Versões do palco
 
-- **v3 (atual) — `palco.html`**: mesma estrutura da v2, com visual **Liquid Glass** (inspirado no design da Apple):
+- **v4 (atual) — `palco.html`**: v3 + aba **Programação**, login da igreja e configurações (ver abaixo).
+- **v3 (anterior) — `v3/palco.html`** (também no branch `v3`): mesma estrutura da v2, com visual **Liquid Glass** (inspirado no design da Apple):
   - vidro só nos controles e na navegação (barra de abas, biblioteca, botões, barra do slide, setas); conteúdo em cartões escuros legíveis;
   - fundo ambiente que muda de cor com a **intensidade** (frio no SUAVE, quente no CLÍMAX), estático para não pesar no PC;
   - o celular (`espelho/`) e a entrada (`index.html`) ganharam o mesmo visual;
@@ -26,6 +27,16 @@ PREACH FLOW — apresentação com espelho PC ↔ celular (o PC toca o áudio, o
 - **v1 (mais antiga) — `v1/palco.html`**: o palco como era até 25/09, guardado igual (também no branch `v1` do GitHub). Usa as mesmas faixas de `audio/` e o mesmo celular.
 
 O controle do celular (`espelho/PREACH_ESPELHO.html`) funciona com as três versões.
+
+
+## Programação (aba nova no palco)
+
+- **Login da igreja** (por enquanto **simulado** no navegador): o palco pede nome da igreja + senha. A senha nunca é guardada crua — passa por **duas codificações de mão única** (PBKDF2-SHA256 com sal aleatório e 210.000 rodadas, depois SHA-256) e só esse resultado fica no "banco". No login a senha digitada passa pelo mesmo processo e os resultados são comparados. Ver `prog/auth.js`. O celular (link com código) não pede login.
+- **Itens** com horário, título e texto. A **bolinha** mostra o estado pelo relógio: **verde** no ar · **laranja** prestes a acontecer · **azul** agendado · **cinza** já aconteceu · **preta** ignorado. Uma linha vermelha marca "agora" e a lista anda sozinha.
+- **Anexos com @**: digite `@` no texto para anexar slide (link do Canva), imagem, vídeo, música, PDF ou texto, dando um nome (ex.: `@SlidePr`). Também dá para **arrastar arquivos** em qualquer lugar da aba (em cima de um item ele já entra no texto daquele item). Os arquivos ficam guardados neste computador.
+- **Configurações** (engrenagem): o que fazer quando um item entra no ar — nada, aviso com botão "usar" ou **automático** (abre slide/imagem/vídeo/texto na aba Slide e toca a música, abaixando o Fundo); minutos da bolinha laranja; backup; sair.
+- **Exportar**: **PDF** ou **JPEG** · **Site** (`programacao.html#…`, só a programação, passando sozinha e atualizando ao vivo) · **Site editável** (mesmo site + comentários ao vivo de quem tem o link, com texto e arquivos de até 300 KB, também via `@`) · **Baixar .html** (cópia que abre sem internet).
+- Sites e comentários passam pelo servidor de mensagens público (MQTT). **Quem tem o link vê** — não coloque nada sigiloso. Arquivos grandes (vídeo, música) não vão para o site; só o nome aparece.
 
 ## Site (GitHub Pages)
 

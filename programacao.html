@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Programação · PREACH FLOW</title>
+<link rel="icon" href="data:,">
+<meta name="robots" content="noindex">
+<style>
+:root{--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--mono:ui-monospace,"SF Mono",Consolas,monospace;
+  --edge:rgba(255,255,255,.16);--sheen:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.03));--hi:inset 0 1px 0 rgba(255,255,255,.25);--blur:blur(22px) saturate(170%)}
+*{box-sizing:border-box}
+html{background:#05070a}
+body{margin:0;min-height:100vh;color:#eef4f8;font-family:var(--font);-webkit-font-smoothing:antialiased}
+.amb{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.amb i{position:absolute;border-radius:50%;filter:blur(80px);opacity:.42}
+.amb .a1{width:60vmax;height:60vmax;left:-18vmax;top:-22vmax;background:radial-gradient(circle,#15803d,transparent 66%)}
+.amb .a2{width:52vmax;height:52vmax;right:-16vmax;top:12vh;background:radial-gradient(circle,#4338ca,transparent 66%)}
+.amb .a3{width:56vmax;height:56vmax;left:20vw;bottom:-32vmax;background:radial-gradient(circle,#7e22ce,transparent 66%)}
+.glass{border:1px solid var(--edge);background:var(--sheen),rgba(14,18,26,.5);box-shadow:var(--hi),0 16px 44px rgba(0,0,0,.4);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+.wrap{max-width:1180px;margin:0 auto;padding:16px 16px 60px}
+header.top{position:sticky;top:10px;z-index:20;display:flex;align-items:center;gap:16px;padding:12px 18px;border-radius:22px;margin-bottom:16px}
+.top .t{flex:1;min-width:0}
+.top small{font:800 10.5px/1 var(--font);letter-spacing:2.4px;color:#86efac;text-transform:uppercase}
+.top h1{margin:4px 0 2px;font-size:clamp(19px,3vw,28px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top .d{color:#9aa6b4;font-size:13px;text-transform:capitalize}
+.clock{text-align:center}.clock span{display:block;font:800 9.5px/1 var(--font);letter-spacing:2px;color:#8a94a3}
+.clock b{font:800 clamp(22px,3.6vw,34px)/1.1 var(--mono);font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.grid.edit{grid-template-columns:minmax(0,1fr) 360px}
+@media(max-width:960px){.grid.edit{grid-template-columns:1fr}}
+.hero{padding:18px 20px;border-radius:24px;margin-bottom:14px}
+.hero .lbl{display:flex;align-items:center;gap:8px;font:800 10.5px/1 var(--font);letter-spacing:2px;color:#86efac}
+.hero h2{margin:8px 0 4px;font-size:clamp(22px,4vw,36px)}
+.hero .tx{color:#cfd8e2;font-size:15px;line-height:1.55}
+.hero .bar{height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:14px}
+.hero .bar i{display:block;height:100%;background:linear-gradient(90deg,#22c55e,#86efac);transition:width 1s linear}
+.hero .meta{margin-top:8px;font:700 12px/1 var(--mono);color:#9aa6b4}
+.hero.idle .lbl{color:#93c5fd}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 4px 10px;font-size:11.5px;color:#9aa6b4}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;flex:0 0 auto;background:#93c5fd}
+.st-noar .dot,.dot.st-noar{background:#4ade80;box-shadow:0 0 0 4px rgba(74,222,128,.22),0 0 18px rgba(74,222,128,.7)}
+.st-prestes .dot,.dot.st-prestes{background:#fb923c;box-shadow:0 0 0 4px rgba(251,146,60,.2)}
+.st-ignorado .dot,.dot.st-ignorado{background:#050505;box-shadow:0 0 0 2px rgba(255,255,255,.35)}
+.st-passou .dot,.dot.st-passou{background:#64748b}
+.list{position:relative}
+.it{display:grid;grid-template-columns:70px 26px minmax(0,1fr);align-items:start}
+.it .tm{padding-top:13px;text-align:right;font:800 16px/1 var(--mono);font-variant-numeric:tabular-nums}
+.it .tm small{display:block;margin-top:5px;font:600 10.5px/1 var(--mono);color:#6b7686}
+.rail{position:relative;align-self:stretch;display:flex;justify-content:center}
+.rail::before{content:"";position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.1)}
+.rail .dot{position:relative;margin-top:16px}
+.card{margin:6px 0;padding:12px 14px;border-radius:18px;border:1px solid rgba(255,255,255,.07);background:rgba(11,14,20,.6);min-width:0}
+.st-noar .card{border-color:rgba(74,222,128,.55);background:linear-gradient(180deg,rgba(74,222,128,.1),rgba(74,222,128,.02)),rgba(11,14,20,.7)}
+.st-prestes .card{border-color:rgba(251,146,60,.45)}
+.st-ignorado .card{opacity:.5}.st-ignorado h3{text-decoration:line-through}
+.st-passou .card{opacity:.6}
+.card .h{display:flex;gap:10px;align-items:center}
+.card h3{margin:0;font-size:16px;flex:1;min-width:0}
+.badge{font:800 10px/1 var(--mono);letter-spacing:1px;color:#8a94a3;white-space:nowrap}
+.st-noar .badge{color:#86efac}.st-prestes .badge{color:#fdba74}
+.card .tx{margin-top:6px;color:#b9c4d0;font-size:14px;line-height:1.55;overflow-wrap:anywhere}
+.now{position:absolute;left:56px;right:0;border-top:2px solid #ef4444;z-index:4;pointer-events:none;transition:top .8s ease}
+.now::before{content:"";position:absolute;left:-5px;top:-6px;width:10px;height:10px;border-radius:50%;background:#ef4444}
+.now span{position:absolute;right:4px;top:-20px;font:800 10px/1 var(--mono);color:#fca5a5;background:rgba(10,12,16,.8);padding:3px 6px;border-radius:6px}
+.pf-chip{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;margin:1px;border-radius:999px;vertical-align:middle;border:1px solid rgba(147,197,253,.35);background:rgba(96,165,250,.12);color:#dbeaff;font:700 12px/1 var(--font);cursor:pointer}
+.pf-chip svg{width:13px;height:13px}
+.pf-chip-miss{color:#fca5a5}
+.side{position:sticky;top:110px;padding:14px;border-radius:22px;align-self:start}
+.side h2{margin:0 0 10px;font:800 10.5px/1 var(--font);letter-spacing:2px;color:#8a94a3;display:flex;justify-content:space-between}
+.side h2 b{color:#8ff0c2;font-family:var(--mono)}
+.cmts{display:flex;flex-direction:column;gap:8px;max-height:46vh;overflow:auto;margin-bottom:12px}
+.cmt{padding:9px 11px;border-radius:14px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.07)}
+.cmt .ch{display:flex;gap:6px;align-items:baseline}.cmt .ch b{font-size:13px}.cmt .ch small{color:#6b7686;font-size:11px}
+.cmt .ct{margin-top:4px;font-size:13.5px;color:#cfd8e2;line-height:1.5;overflow-wrap:anywhere}
+.empty{color:#6b7686;font-size:13px}
+form.comp{display:flex;flex-direction:column;gap:8px;position:relative}
+.comp input,.comp textarea,.comp select{width:100%;min-height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.3);color:#fff;font:500 14px/1.4 var(--font);padding:9px 12px;outline:none;color-scheme:dark}
+.comp textarea{resize:vertical;min-height:84px}
+.comp input:focus,.comp textarea:focus,.comp select:focus{border-color:rgba(170,255,215,.7)}
+.comp .row{display:flex;gap:8px;align-items:center}
+.files{display:flex;flex-wrap:wrap;gap:6px}
+.fchip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 6px 0 10px;border-radius:999px;background:rgba(143,240,194,.1);border:1px solid rgba(170,255,215,.35);font-size:12px;color:#c9ffe4}
+.fchip button{width:20px;height:20px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;cursor:pointer}
+.btn{height:42px;padding:0 16px;border-radius:13px;border:1px solid var(--edge);background:var(--sheen),rgba(255,255,255,.07);box-shadow:var(--hi);color:#fff;font:800 12px/1 var(--font);letter-spacing:1.2px;cursor:pointer;white-space:nowrap}
+.btn.primary{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),rgba(170,255,210,.9);color:#05140c;border-color:rgba(255,255,255,.55);flex:1}
+.btn:focus-visible,.pf-chip:focus-visible{outline:2px solid #8ff0c2;outline-offset:2px}
+.hint{font-size:11.5px;color:#7f8a98;line-height:1.45}
+.ac{position:absolute;left:0;right:0;z-index:30;padding:6px;border-radius:14px;border:1px solid rgba(255,255,255,.18);background:rgba(16,20,28,.95);box-shadow:0 18px 50px rgba(0,0,0,.55)}
+.ac div{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;cursor:pointer;font-size:13px}
+.ac div.on,.ac div:hover{background:rgba(255,255,255,.1)}
+.ac svg{width:13px;height:13px}
+.drop{outline:2px dashed rgba(143,240,194,.7);outline-offset:4px}
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(3,5,8,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.modal .box{width:100%;max-width:440px;max-height:calc(100vh - 40px);overflow:auto;padding:20px;border-radius:24px}
+.modal h3{margin:0 0 10px}
+.modal .tx{white-space:pre-wrap;line-height:1.6;font-size:15px}
+.modal input{width:100%;min-height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.3);color:#fff;font:500 15px var(--font);padding:9px 12px}
+.modal .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.state{padding:60px 20px;text-align:center;color:#9aa6b4}
+.state b{display:block;color:#fff;font-size:20px;margin-bottom:6px}
+footer{margin-top:28px;text-align:center;color:#5d6675;font-size:12px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:200;padding:10px 16px;border-radius:14px;font-size:13px}
+@media(max-width:560px){.it{grid-template-columns:54px 22px minmax(0,1fr)}.it .tm{font-size:14px}.now{left:42px}header.top{gap:10px;padding:10px 14px}}
+@media (prefers-reduced-transparency:reduce){.glass{background:#151a23;-webkit-backdrop-filter:none;backdrop-filter:none}.amb{display:none}}
+@media (prefers-reduced-motion:reduce){.now,.hero .bar i{transition:none}}
+</style>
+<script src="prog/core.js"></script>
+<script src="prog/core-comments.js"></script>
+<script src="prog/mqtt.js"></script>
+<!--PF_EMBED-->
+</head>
+<body>
+<div class="amb" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
+<div class="wrap">
+  <header class="top glass">
+    <div class="t"><small id="vIgreja">PREACH FLOW</small><h1 id="vTitulo">Programação</h1><div class="d" id="vData"></div></div>
+    <div class="clock"><span>AGORA</span><b id="vNow">--:--</b></div>
+  </header>
+  <div id="vState" class="state"><b>Conectando…</b>buscando a programação</div>
+  <div class="grid" id="vGrid" hidden>
+    <main>
+      <section class="hero glass" id="vHero"></section>
+      <div class="legend" id="vLegend"></div>
+      <div class="list" id="vList"></div>
+    </main>
+    <aside class="side glass" id="vSide" hidden aria-label="Comentários">
+      <h2>COMENTÁRIOS <b id="vCn">0</b></h2>
+      <div class="cmts" id="vCmts" aria-live="polite"></div>
+      <form class="comp" id="vComp" autocomplete="off">
+        <input id="cNome" placeholder="Seu nome" maxlength="40" aria-label="Seu nome" required>
+        <select id="cItem" aria-label="Sobre qual momento"><option value="">Sobre: programação toda</option></select>
+        <textarea id="cTexto" placeholder="Escreva… digite @ para anexar um arquivo ou citar um anexo" aria-label="Comentário" maxlength="2000"></textarea>
+        <div class="ac" id="cAc" hidden role="listbox"></div>
+        <div class="files" id="cFiles"></div>
+        <div class="row"><button type="button" class="btn" id="cAnexar">ANEXAR</button><button type="submit" class="btn primary">ENVIAR</button></div>
+        <div class="hint">Arraste arquivos aqui (até 300 KB cada). Quem tem este link vê e comenta.</div>
+        <input type="file" id="cFile" multiple hidden>
+      </form>
+    </aside>
+  </div>
+  <footer>PREACH FLOW · a programação passa sozinha conforme o horário</footer>
+</div>
+<script>
+(function(){
+'use strict';
+const C=window.PFCore,$=id=>document.getElementById(id);
+const hash=(location.hash||'').replace('#','');
+const [pubId,editKey]=hash.split('.');
+let D=window.PF_EMBED||null,comments={v:1,list:[],del:[]},client=null,pending=[],ac={opts:[],sel:0,start:0},userScroll=0;
+const editable=!!(editKey&&!window.PF_EMBED);
+
+function toast(m){const t=document.createElement('div');t.className='toast glass';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+function byName(){return C.byName(D?D.anexos:{})}
+function render(){
+  if(!D)return;
+  $('vState').hidden=true;$('vGrid').hidden=false;
+  $('vIgreja').textContent=D.igreja||'PREACH FLOW';$('vTitulo').textContent=D.titulo||'Programação';document.title=(D.titulo||'Programação')+' · '+(D.igreja||'PREACH FLOW');
+  $('vData').textContent=D.data?new Date(D.data+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}):'';
+  $('vLegend').innerHTML=['noar','prestes','agendado','passou','ignorado'].map(k=>`<span><i class="dot st-${k}"></i>${C.STATES[k].label}</span>`).join('');
+  const bn=byName();
+  $('vList').innerHTML=C.sorted(D.items).map(it=>`<article class="it" data-id="${C.esc(it.id)}"><div class="tm">${C.esc(it.hora||'--:--')}<small></small></div><div class="rail"><span class="dot"></span></div>
+    <div class="card"><div class="h"><h3>${C.esc(it.titulo||'')}</h3><span class="badge"></span></div>${it.texto?`<div class="tx">${C.renderText(it.texto,bn)}</div>`:''}</div></article>`).join('')+'<div class="now" id="vNowL" hidden><span></span></div>';
+  if(editable){
+    $('vGrid').classList.add('edit');$('vSide').hidden=false;
+    const sel=$('cItem'),cur=sel.value;
+    sel.innerHTML='<option value="">Sobre: programação toda</option>'+C.sorted(D.items).map(i=>`<option value="${C.esc(i.id)}">${C.esc((i.hora||'')+' · '+i.titulo)}</option>`).join('');
+    sel.value=cur;
+  }
+  tick(true);renderComments();
+}
+function tick(force){
+  if(!D)return;
+  const st=C.compute(D.items,D.cfg||{});
+  $('vNow').textContent=C.fmt(Math.floor(st.now));
+  document.querySelectorAll('.it').forEach(el=>{
+    const s=st.map[el.dataset.id];if(!s)return;el.className='it st-'+s.state;
+    el.querySelector('.badge').textContent=s.state==='noar'?'NO AR':s.state==='prestes'?'EM '+Math.max(1,Math.ceil(s.inMin))+' MIN':s.state==='ignorado'?'NÃO ACONTECERÁ':s.state==='passou'?'FEITO':'';
+    el.querySelector('.tm small').textContent=s.end!=null?'até '+C.fmt(s.end):'';
+  });
+  const bn=byName(),h=$('vHero');
+  if(st.live){const s=st.map[st.live.id];
+    h.className='hero glass';h.innerHTML=`<div class="lbl"><i class="dot st-noar"></i>NO AR AGORA</div><h2>${C.esc(st.live.titulo)}</h2>${st.live.texto?`<div class="tx">${C.renderText(st.live.texto,bn)}</div>`:''}
+      <div class="bar"><i style="width:${Math.round(s.progress*100)}%"></i></div><div class="meta">${C.esc(st.live.hora)} – ${C.fmt(s.end)} · faltam ${Math.max(1,Math.ceil(s.end-st.now))} min${st.next?' · depois: '+C.esc(st.next.titulo)+' às '+C.esc(st.next.hora):''}</div>`;
+  }else if(st.next){
+    h.className='hero glass idle';h.innerHTML=`<div class="lbl"><i class="dot st-${st.map[st.next.id].state}"></i>A SEGUIR · ${C.esc(st.next.hora)}</div><h2>${C.esc(st.next.titulo)}</h2><div class="meta">começa em ${Math.max(1,Math.ceil(st.map[st.next.id].inMin))} min</div>`;
+  }else{h.className='hero glass idle';h.innerHTML='<div class="lbl">PROGRAMAÇÃO</div><h2>Nada acontecendo agora</h2>'}
+  // linha do agora
+  const items=C.sorted(D.items).filter(i=>C.toMin(i.hora)!=null),els=items.map(i=>document.querySelector('.it[data-id="'+CSS.escape(i.id)+'"]'));
+  let top=null;
+  for(let i=0;i<items.length;i++){const a=C.toMin(items[i].hora),b=i+1<items.length?C.toMin(items[i+1].hora):st.map[items[i].id].end;
+    if(st.now>=a&&st.now<b&&els[i]){const y1=els[i].offsetTop+12,y2=i+1<items.length&&els[i+1]?els[i+1].offsetTop+12:els[i].offsetTop+els[i].offsetHeight;top=y1+(y2-y1)*((st.now-a)/Math.max(1e-6,b-a));break}}
+  const L=$('vNowL');if(L){L.hidden=top==null;if(top!=null){L.style.top=top+'px';L.querySelector('span').textContent='agora '+C.fmt(Math.floor(st.now))}}
+  if(st.live&&Date.now()-userScroll>30000&&(force||tick._l!==st.live.id)){
+    const el=document.querySelector('.it[data-id="'+CSS.escape(st.live.id)+'"]');
+    if(el&&!force)el.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});tick._l=st.live.id;
+  }
+}
+addEventListener('wheel',()=>userScroll=Date.now(),{passive:true});addEventListener('touchmove',()=>userScroll=Date.now(),{passive:true});
+
+/* chips */
+document.addEventListener('click',e=>{
+  const ch=e.target.closest('.pf-chip[data-anexo]');if(!ch)return;
+  const id=ch.dataset.anexo;
+  if(id.startsWith('c:')){const [,cid,nome]=id.split(':');const c=comments.list.find(x=>x.id===cid),f=c&&(c.files||[]).find(x=>x.nome===nome);
+    if(f){const a=document.createElement('a');a.href=URL.createObjectURL(C.dataToBlob(f.data));a.download=f.arquivo||f.nome;a.click()}return}
+  const a=D&&D.anexos[id];if(!a)return;
+  if(a.url){window.open(a.url,'_blank','noopener');return}
+  if(a.kind==='texto'&&a.texto){modal(`<h3>@${C.esc(a.nome)}</h3><div class="tx">${C.esc(a.texto)}</div>`);return}
+  modal(`<h3>@${C.esc(a.nome)}</h3><p>${C.esc(C.KIND_LABEL[a.kind]||'Arquivo')} ${C.size(a.size)} — este arquivo fica no computador do palco e aparece na tela na hora certa.</p>`);
+});
+function modal(html,ok){
+  return new Promise(res=>{const m=document.createElement('div');m.className='modal';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');
+    m.innerHTML=`<form class="box glass">${html}<div class="acts">${ok?'<button type="button" class="btn" data-x>CANCELAR</button><button type="submit" class="btn primary" style="flex:0">OK</button>':'<button type="submit" class="btn">FECHAR</button>'}</div></form>`;
+    document.body.appendChild(m);const f=m.querySelector('form'),inp=f.querySelector('input');if(inp){inp.focus();inp.select()}else f.querySelector('button').focus();
+    const close=v=>{m.remove();res(v)};
+    m.addEventListener('keydown',e=>{if(e.key==='Escape')close(null)});m.addEventListener('click',e=>{if(e.target===m)close(null)});
+    const x=m.querySelector('[data-x]');if(x)x.onclick=()=>close(null);
+    f.onsubmit=e=>{e.preventDefault();close(ok?ok(f):true)};
+  });
+}
+
+/* comentários */
+function renderComments(){
+  if(!editable)return;
+  $('vCn').textContent=comments.list.length;
+  const bn=byName(),items={};(D?D.items:[]).forEach(i=>items[i.id]=i);
+  $('vCmts').innerHTML=comments.list.length?comments.list.map(c=>{
+    const fbn=Object.assign({},bn);(c.files||[]).forEach(f=>{fbn[String(f.nome).toLowerCase()]={id:'c:'+c.id+':'+f.nome,nome:f.nome,kind:f.kind}});
+    const sem=(c.files||[]).filter(f=>!C.mentions(c.texto).includes(String(f.nome).toLowerCase()));
+    return `<div class="cmt"><div class="ch"><b>${C.esc(c.autor)}</b><small>${C.ago(c.at)}${c.item&&items[c.item]?' · '+C.esc(items[c.item].titulo):''}</small></div>
+      <div class="ct">${C.renderText(c.texto,fbn)}${sem.length?'<br>'+sem.map(f=>C.renderText('@'+f.nome,fbn)).join(' '):''}</div></div>`}).join(''):'<div class="empty">Seja o primeiro a comentar.</div>';
+  const b=$('vCmts');b.scrollTop=b.scrollHeight;
+}
+function drawFiles(){$('cFiles').innerHTML=pending.map((f,i)=>`<span class="fchip">${C.icon(f.kind)}@${C.esc(f.nome)} <small>${C.size(f.size)}</small><button type="button" data-rm="${i}" aria-label="Remover">×</button></span>`).join('')}
+$('cFiles').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(b){pending.splice(+b.dataset.rm,1);drawFiles()}});
+function uniq(n){n=C.cleanName(n);const used=new Set([...Object.values(D?D.anexos:{}).map(a=>a.nome.toLowerCase()),...pending.map(p=>p.nome.toLowerCase())]);if(!used.has(n.toLowerCase()))return n;let i=2;while(used.has((n+i).toLowerCase()))i++;return n+i}
+async function attach(file){
+  if(file.size>C.LIMIT_FILE){toast(file.name+': máximo 300 KB por arquivo');return null}
+  const kind=C.kind(file.type,file.name);
+  const nome=await modal(`<h3>Anexar ${C.esc((C.KIND_LABEL[kind]||'arquivo').toLowerCase())}</h3><p class="hint">${C.esc(file.name)} · ${C.size(file.size)}</p><label class="hint" for="mN">Nome para usar com @</label><input id="mN" value="${C.esc(uniq(file.name))}" maxlength="24">`,f=>uniq(f.querySelector('input').value));
+  if(!nome)return null;
+  const f={nome,kind,mime:file.type,size:file.size,arquivo:file.name,data:await C.fileToData(file)};
+  pending.push(f);drawFiles();return f;
+}
+function insertAt(ta,start,end,txt){ta.value=ta.value.slice(0,start)+txt+ta.value.slice(end);ta.focus();ta.selectionStart=ta.selectionEnd=start+txt.length}
+const ta=$('cTexto');
+ta.addEventListener('input',()=>{
+  const v=ta.value.slice(0,ta.selectionStart),m=/(^|\s)@([\p{L}\p{N}_-]*)$/u.exec(v);
+  if(!m){$('cAc').hidden=true;return}
+  const q=m[2].toLowerCase();
+  const pool=[...Object.values(D?D.anexos:{}),...pending.map(p=>({nome:p.nome,kind:p.kind}))].filter(a=>a.nome.toLowerCase().includes(q)).slice(0,6);
+  ac={start:ta.selectionStart-m[2].length-1,sel:0,opts:[...pool.map(a=>({a})),{file:1}]};drawAc();
+});
+function drawAc(){const b=$('cAc');b.innerHTML=ac.opts.map((o,i)=>`<div role="option" data-i="${i}" class="${i===ac.sel?'on':''}">${o.a?C.icon(o.a.kind)+'@'+C.esc(o.a.nome):'<b style="color:#8ff0c2">+</b> Anexar arquivo do aparelho…'}</div>`).join('');b.style.top=(ta.offsetTop+ta.offsetHeight+4)+'px';b.hidden=false}
+async function pick(i){
+  const o=ac.opts[i],end=ta.selectionStart,start=ac.start;$('cAc').hidden=true;if(!o)return;
+  let nome=o.a&&o.a.nome;
+  if(o.file){const fs=await new Promise(r=>{const f=$('cFile');f.value='';f.onchange=()=>r([...f.files]);f.click()});for(const f of fs){const x=await attach(f);if(x){nome=x.nome;break}}}
+  if(nome)insertAt(ta,start,end,'@'+nome+' ');
+}
+ta.addEventListener('keydown',e=>{if($('cAc').hidden)return;
+  if(e.key==='ArrowDown'){e.preventDefault();ac.sel=(ac.sel+1)%ac.opts.length;drawAc()}
+  else if(e.key==='ArrowUp'){e.preventDefault();ac.sel=(ac.sel-1+ac.opts.length)%ac.opts.length;drawAc()}
+  else if(e.key==='Enter'||e.key==='Tab'){e.preventDefault();pick(ac.sel)}
+  else if(e.key==='Escape'){$('cAc').hidden=true}});
+$('cAc').addEventListener('mousedown',e=>{const o=e.target.closest('[data-i]');if(o){e.preventDefault();pick(+o.dataset.i)}});
+ta.addEventListener('blur',()=>setTimeout(()=>{$('cAc').hidden=true},150));
+$('cAnexar').onclick=()=>{const f=$('cFile');f.value='';f.onchange=async()=>{for(const x of [...f.files])await attach(x)};f.click()};
+const comp=$('vComp');
+['dragenter','dragover'].forEach(t=>comp.addEventListener(t,e=>{e.preventDefault();comp.classList.add('drop')}));
+['dragleave','drop'].forEach(t=>comp.addEventListener(t,()=>comp.classList.remove('drop')));
+comp.addEventListener('drop',async e=>{e.preventDefault();const added=[];for(const f of [...e.dataTransfer.files]){const x=await attach(f);if(x)added.push(x)}
+  if(added.length){const p=ta.selectionStart||ta.value.length;insertAt(ta,p,p,(p&&!/\s$/.test(ta.value.slice(0,p))?' ':'')+added.map(x=>'@'+x.nome).join(' ')+' ')}});
+try{$('cNome').value=localStorage.getItem('pf.autor')||''}catch(e){}
+comp.onsubmit=e=>{
+  e.preventDefault();
+  const autor=$('cNome').value.trim(),texto=ta.value.trim();
+  if(!autor){$('cNome').focus();toast('Coloque seu nome');return}
+  if(!texto&&!pending.length){ta.focus();return}
+  try{localStorage.setItem('pf.autor',autor)}catch(_){}
+  const c={id:C.uid(10),autor,texto,item:$('cItem').value||'',at:Date.now(),files:pending.slice()};
+  const next=C.mergeComments(comments,{list:[c]});
+  if(C.commentsSize(next)>C.LIMIT_TOTAL){toast('Os anexos dos comentários já estão no limite. Envie sem arquivo.');return}
+  if(!client||client.state!=='ready'){toast('Sem conexão — tente de novo em instantes');return}
+  comments=next;client.publish(C.topicComments(pubId,editKey),JSON.stringify(comments),true);
+  ta.value='';pending=[];drawFiles();renderComments();toast('Comentário enviado');
+};
+
+/* conexão */
+if(D){render()}
+else if(!pubId){$('vState').innerHTML='<b>Link incompleto</b>Peça o link da programação para quem montou.'}
+else{
+  const topics=[C.topicProg(pubId)];if(editable)topics.push(C.topicComments(pubId,editKey));
+  let got=false;
+  client=C.connect(topics,(t,o,ret)=>{
+    if(t===C.topicProg(pubId)){got=true;if(!o){D=null;$('vGrid').hidden=true;$('vState').hidden=false;$('vState').innerHTML='<b>Programação encerrada</b>Este link foi despublicado.';return}D=o;render();return}
+    if(editable&&t===C.topicComments(pubId,editKey)){
+      const mine=comments;comments=C.mergeComments(comments,o);renderComments();
+      // se este aparelho tinha algo que o servidor não tem, reenvia a lista unida
+      const have=new Set((o&&o.list||[]).map(c=>c.id));
+      if(mine.list.some(c=>!have.has(c.id)&&!(o&&o.del||[]).includes(c.id)))setTimeout(()=>client.publish(C.topicComments(pubId,editKey),JSON.stringify(comments),true),300+Math.random()*700);
+    }
+  },st=>{if(st==='wait'&&!got)$('vState').innerHTML='<b>Reconectando…</b>sem conexão com o servidor'});
+  setTimeout(()=>{if(!got&&!D)$('vState').innerHTML='<b>Programação não encontrada</b>O link pode estar errado ou o palco ainda não publicou.'},9000);
+}
+setInterval(()=>tick(),10000);
+})();
+</script>
+</body>
+</html>

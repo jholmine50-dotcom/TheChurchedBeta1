@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PREACH FLOW V4 — Palco</title>
+<title>PREACH FLOW V3 — Palco (versão anterior)</title>
 <link rel="icon" href="data:,">
 <style>*{box-sizing:border-box}
 :root{
@@ -191,9 +191,8 @@ body.v2{padding-top:var(--ts-h)}
 body.v2.pe-cell{padding-top:0}
 body.v2 .app{min-height:calc(100vh - var(--ts-h))}
 @media (min-width:961px){body.v2 .music-dock{top:var(--ts-h);height:calc(100vh - var(--ts-h))}}
-body.v2:not(.tab-fundo) .app{display:none}
-body.v2:not(.tab-slide) .slide-panel{display:none}
-body.v2:not(.tab-prog) .prog-panel{display:none}
+body.v2.tab-slide .app{display:none}
+body.v2.tab-fundo .slide-panel{display:none}
 
 /* faixa de abas (estilo Chrome) */
 .tabstrip{position:fixed;top:0;left:0;right:0;height:var(--ts-h);z-index:170;display:flex;align-items:flex-end;gap:0;
@@ -281,8 +280,8 @@ body.v2.pe-host #pe-cvStage.cv-full{inset:auto;top:calc(var(--ts-h) + var(--sl-b
 body.v2.pe-host #pe-cvStage.cv-full .cv-frame{flex:0 0 auto;aspect-ratio:16/9;height:auto;width:min(100%,calc((100vh - var(--ts-h) - var(--sl-bar) - 54px)*16/9));max-width:100%;max-height:100%;
   border-radius:8px;box-shadow:0 18px 50px rgba(0,0,0,.55);border:1px solid var(--line)}
 body.v2.pe-host #pe-cvStage .cv-close,body.v2.pe-host #pe-cvStage .cv-page,body.v2.pe-host #pe-cvStage .cv-max{display:none}
-body.v2:not(.tab-slide) #pe-cvStage{visibility:hidden!important;pointer-events:none!important}
-body.v2:not(.tab-slide) #pe-cvStage *{visibility:hidden!important}
+body.v2.tab-fundo #pe-cvStage{visibility:hidden!important;pointer-events:none!important}
+body.v2.tab-fundo #pe-cvStage *{visibility:hidden!important}
 
 /* tela cheia (projetar) */
 body.v2.slide-full .tabstrip,body.v2.slide-full .sl-bar,body.v2.slide-full .sl-hint{display:none}
@@ -460,12 +459,11 @@ body.pe-cell #espelhoRoot{background:transparent!important}
 body.pe-cell{background:transparent!important}
 #pe-roomGate{background:rgba(5,7,10,.35)!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 </style>
-<link rel="stylesheet" href="prog/prog.css">
 </head>
 <body class="mode-base v2 tab-fundo">
 <div class="lg-ambient" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
 <nav class="tabstrip" id="tabstrip" aria-label="Áreas do palco">
-  <div class="ts-brand" title="PREACH FLOW V4">PF</div>
+  <div class="ts-brand" title="PREACH FLOW V3">PF</div>
   <div role="tablist" aria-label="Áreas do palco" style="display:contents">
     <button class="ts-tab active" id="tab-fundo" role="tab" data-tab="fundo" aria-selected="true" aria-controls="panel-fundo" type="button" title="Fundo · música (Alt+1)">
       <svg class="ts-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span class="ts-label">Fundo</span><span class="ts-meta" id="tsFundoMeta">parado</span><span class="ts-eq" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -473,14 +471,9 @@ body.pe-cell{background:transparent!important}
     <button class="ts-tab" id="tab-slide" role="tab" data-tab="slide" aria-selected="false" aria-controls="panel-slide" type="button" title="Slide · Canva (Alt+2)">
       <svg class="ts-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span class="ts-label">Slide</span><span class="ts-meta" id="tsSlideMeta">vazio</span><span class="ts-live" aria-hidden="true"></span>
     </button>
-    <button class="ts-tab" id="tab-prog" role="tab" data-tab="prog" aria-selected="false" aria-controls="panel-prog" type="button" title="Programação (Alt+3)">
-      <svg class="ts-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="ts-label">Programação</span><span class="ts-meta" id="tsProgMeta">—</span><span class="ts-pdot" aria-hidden="true"></span>
-    </button>
   </div>
   <div class="ts-spacer"></div>
-  <button class="ts-church" id="tsChurch" type="button" title="Igreja · configurações"></button>
   <div class="ts-status" aria-live="polite"><span class="ts-dot" id="tsNetDot"></span><span id="tsNetTxt">conectando…</span><span>·</span><span id="tsPeers">0 controles</span></div>
-  <button class="ts-cfg" id="tsConfig" type="button" aria-label="Configurações" title="Configurações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   <button class="ts-mirror" id="tsMirror" type="button" aria-pressed="false" title="Código da sala, QR e aparelhos conectados">ESPELHAR <b id="tsCode">—</b></button>
 </nav>
 
@@ -508,8 +501,6 @@ body.pe-cell{background:transparent!important}
   <div class="sl-hint"><kbd>←</kbd> <kbd>→</kbd> ou <kbd>PgUp</kbd> <kbd>PgDn</kbd> passam os slides (funciona com passador) · a música continua tocando na aba Fundo</div>
 </section>
 
-<section class="prog-panel" id="panel-prog" role="tabpanel" aria-labelledby="tab-prog" hidden></section>
-
 <div class="app" id="panel-fundo" role="tabpanel" aria-labelledby="tab-fundo">
   <aside class="music-dock" id="musicDock">
     <div class="dock-title"><span>BIBLIOTECA</span><span id="dockCount">10</span></div>
@@ -525,7 +516,7 @@ body.pe-cell{background:transparent!important}
         <div class="brand-mark">PF</div>
         <div>
           <div class="brand">PREACH FLOW</div>
-          <div class="muted">instrumento de expressão emocional para pregação · V4</div>
+          <div class="muted">instrumento de expressão emocional para pregação · V3</div>
         </div>
       </div>
       <div class="header-right">
@@ -631,18 +622,18 @@ body.pe-cell{background:transparent!important}
 </script>
 <script>
 const MUSICS={
-  original:{label:"Original",tracks:{"Backing_Vocals":"audio/original/Backing_Vocals.mp3","Drums":"audio/original/Drums.mp3","Bass":"audio/original/Bass.mp3","Keyboard":"audio/original/Keyboard.mp3","Percussion":"audio/original/Percussion.mp3","Strings":"audio/original/Strings.mp3","Synth":"audio/original/Synth.mp3","FX":"audio/original/FX.mp3","Brass":"audio/original/Brass.mp3","Woodwinds":"audio/original/Woodwinds.mp3"}},
-  oceans:{label:"Agnus Dei",tracks:{"Drums":"audio/oceans/Drums.mp3","Bass":"audio/oceans/Bass.mp3","Keyboard":"audio/oceans/Keyboard.mp3","Percussion":"audio/oceans/Percussion.mp3","Strings":"audio/oceans/Strings.mp3","Synth":"audio/oceans/Synth.mp3","FX":"audio/oceans/FX.mp3","Brass":"audio/oceans/Brass.mp3","Woodwinds":"audio/oceans/Woodwinds.mp3"}},
+  original:{label:"Original",tracks:{"Backing_Vocals":"../audio/original/Backing_Vocals.mp3","Drums":"../audio/original/Drums.mp3","Bass":"../audio/original/Bass.mp3","Keyboard":"../audio/original/Keyboard.mp3","Percussion":"../audio/original/Percussion.mp3","Strings":"../audio/original/Strings.mp3","Synth":"../audio/original/Synth.mp3","FX":"../audio/original/FX.mp3","Brass":"../audio/original/Brass.mp3","Woodwinds":"../audio/original/Woodwinds.mp3"}},
+  oceans:{label:"Agnus Dei",tracks:{"Drums":"../audio/oceans/Drums.mp3","Bass":"../audio/oceans/Bass.mp3","Keyboard":"../audio/oceans/Keyboard.mp3","Percussion":"../audio/oceans/Percussion.mp3","Strings":"../audio/oceans/Strings.mp3","Synth":"../audio/oceans/Synth.mp3","FX":"../audio/oceans/FX.mp3","Brass":"../audio/oceans/Brass.mp3","Woodwinds":"../audio/oceans/Woodwinds.mp3"}},
   forte:{label:"Oração Forte",tracks:{
-"Drums":"audio/forte/Drums.mp3",
-"Bass":"audio/forte/Bass.mp3",
-"Keyboard":"audio/forte/Keyboard.mp3",
-"Percussion":"audio/forte/Percussion.mp3",
-"Strings":"audio/forte/Strings.mp3",
-"Synth":"audio/forte/Synth.mp3",
-"FX":"audio/forte/FX.mp3",
-"Brass":"audio/forte/Brass.mp3",
-"Woodwinds":"audio/forte/Woodwinds.mp3"
+"Drums":"../audio/forte/Drums.mp3",
+"Bass":"../audio/forte/Bass.mp3",
+"Keyboard":"../audio/forte/Keyboard.mp3",
+"Percussion":"../audio/forte/Percussion.mp3",
+"Strings":"../audio/forte/Strings.mp3",
+"Synth":"../audio/forte/Synth.mp3",
+"FX":"../audio/forte/FX.mp3",
+"Brass":"../audio/forte/Brass.mp3",
+"Woodwinds":"../audio/forte/Woodwinds.mp3"
 }},
 };
 let currentSet="original";
@@ -1922,7 +1913,7 @@ function renderCanva(){
     app.style.paddingTop=(!on||role==='palco')?'':'25vh';
     app.style.paddingBottom=wantPad?'20vh':'';
   }
-  if(on&&!cvWasOn&&role==='palco'){if(typeof peToggle==='function')peToggle(false);if(window.PFProg)PFProg.closeMedia();v2SetTab('slide')}
+  if(on&&!cvWasOn&&role==='palco'){if(typeof peToggle==='function')peToggle(false);v2SetTab('slide')}
   if(!on&&cvWasOn&&role==='palco')v2ExitFull();
   cvWasOn=on;
   v2RenderBar(cs,on);
@@ -1956,31 +1947,29 @@ function renderCanva(){
 
 /* ===== V2 · abas do palco ===== */
 function v2SetTab(t){
-  if(t!=='fundo'&&t!=='slide'&&t!=='prog')t='fundo';
-  ['fundo','slide','prog'].forEach(k=>document.body.classList.toggle('tab-'+k,t===k));
-  ['fundo','slide','prog'].forEach(k=>{
+  if(t!=='fundo'&&t!=='slide')t='fundo';
+  document.body.classList.toggle('tab-fundo',t==='fundo');
+  document.body.classList.toggle('tab-slide',t==='slide');
+  ['fundo','slide'].forEach(k=>{
     const b=document.getElementById('tab-'+k),p=document.getElementById('panel-'+k);
     if(b){b.classList.toggle('active',k===t);b.setAttribute('aria-selected',k===t?'true':'false');b.tabIndex=k===t?0:-1}
     if(p)p.hidden=k!==t;
   });
-  if(t!=='slide')v2ExitFull();
+  if(t==='fundo')v2ExitFull();
   if(typeof peToggle==='function'&&document.getElementById('pe-app')&&document.getElementById('pe-app').classList.contains('pe-open'))peToggle(false);
   try{localStorage.setItem('pf.v2.tab',t)}catch(e){}
   if(t==='slide')requestAnimationFrame(renderLaser);
 }
-function v2Tab(){return document.body.classList.contains('tab-slide')?'slide':document.body.classList.contains('tab-prog')?'prog':'fundo'}
+function v2Tab(){return document.body.classList.contains('tab-slide')?'slide':'fundo'}
 function v2RenderBar(cs,on){
   const e=document.getElementById('slEmpty');if(e)e.style.display=on?'none':'';
   const pg=document.getElementById('slPage');if(pg)pg.textContent=on?('slide '+Math.max(1,cs.page||1)):'—';
-  const mOn=document.body.classList.contains('pf-media-on');
-  if(e&&mOn)e.style.display='none';
-  ['slPrev','slNext'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=!on||mOn});
-  ['slFull','slClose'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=!(on||mOn)});
+  ['slPrev','slNext','slFull','slClose'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=!on});
   const pv=document.getElementById('slPrev');if(pv&&on)pv.disabled=(cs.page||1)<=1;
   const u=document.getElementById('slUrl');if(u&&document.activeElement!==u)u.value=on?cs.url:'';
 }
 function v2EnterFull(){
-  if(!canvaState().url&&!document.body.classList.contains('pf-media-on'))return;
+  if(!canvaState().url)return;
   document.body.classList.add('slide-full');
   v2Idle();
   const el=document.documentElement;
@@ -2028,12 +2017,12 @@ function v2Tick(){
 function v2Init(){
   if(role!=='palco')return;
   let t='fundo';try{t=localStorage.getItem('pf.v2.tab')||'fundo'}catch(e){}
-  v2SetTab(t==='slide'&&!canvaState().url?'fundo':t);
-  ['fundo','slide','prog'].forEach(k=>{const b=document.getElementById('tab-'+k);if(b)b.onclick=()=>v2SetTab(k)});
+  v2SetTab(canvaState().url?t:'fundo');
+  ['fundo','slide'].forEach(k=>{const b=document.getElementById('tab-'+k);if(b)b.onclick=()=>v2SetTab(k)});
   const tl=document.getElementById('tabstrip');
   if(tl)tl.addEventListener('keydown',e=>{
     if(!e.target.classList||!e.target.classList.contains('ts-tab'))return;
-    if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();e.stopPropagation();const L=['fundo','slide','prog'],i=L.indexOf(v2Tab()),n=L[(i+(e.key==='ArrowRight'?1:2))%3];v2SetTab(n);document.getElementById('tab-'+n).focus()}
+    if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();e.stopPropagation();const n=v2Tab()==='fundo'?'slide':'fundo';v2SetTab(n);document.getElementById('tab-'+n).focus()}
   });
   const mb=document.getElementById('tsMirror');
   if(mb)mb.onclick=()=>{const a=document.getElementById('pe-app');peToggle(!(a&&a.classList.contains('pe-open')))};
@@ -2049,7 +2038,7 @@ function v2Init(){
   const on=(id,f)=>{const b=document.getElementById(id);if(b)b.onclick=f};
   on('slPrev',()=>canvaNav(-1));
   on('slNext',()=>canvaNav(1));
-  on('slClose',()=>{v2ExitFull();if(window.PFProg&&PFProg.mediaOn()){PFProg.closeMedia();return}canvaClose()});
+  on('slClose',()=>{v2ExitFull();canvaClose()});
   on('slFull',v2EnterFull);
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('slide-full')){document.body.classList.remove('slide-full','idle');requestAnimationFrame(renderLaser)}});
   document.addEventListener('mousemove',v2Idle,{passive:true});
@@ -2058,21 +2047,14 @@ function v2Init(){
     const tg=e.target&&e.target.tagName;
     if(e.altKey&&(e.key==='1'||e.code==='Digit1')){e.preventDefault();v2SetTab('fundo');return}
     if(e.altKey&&(e.key==='2'||e.code==='Digit2')){e.preventDefault();v2SetTab('slide');return}
-    if(e.altKey&&(e.key==='3'||e.code==='Digit3')){e.preventDefault();v2SetTab('prog');return}
     if(tg==='INPUT'||tg==='TEXTAREA')return;
     if(e.target.classList&&e.target.classList.contains('ts-tab')&&(e.key==='ArrowRight'||e.key==='ArrowLeft'))return;
     if(e.key==='Escape'&&document.body.classList.contains('slide-full')){v2ExitFull();return}
-    if(!canvaState().url||v2Tab()==='prog')return;
+    if(!canvaState().url)return;
     if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();canvaNav(1)}
     else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();canvaNav(-1)}
   });
   v2Tick();setInterval(v2Tick,300);
-  window.PF={
-    setTab:v2SetTab,toast,
-    isDucked:()=>typeof ducked!=='undefined'&&!!ducked,
-    refreshBar:()=>{const cs=canvaState();v2RenderBar(cs,!!cs.url)},
-    openCanva:raw=>canvaResolve(raw).then(url=>{S.canva={url:url,page:1};commit(['canva'],true);render();v2SetTab('slide')})
-  };
 }
 //__CANVA_END__
 function render(){
@@ -2392,9 +2374,4 @@ peInit();
 })();
 </script>
 
-<script src="prog/core.js"></script>
-<script src="prog/core-comments.js"></script>
-<script src="prog/mqtt.js"></script>
-<script src="prog/auth.js"></script>
-<script src="prog/prog.js"></script>
 </body></html>
