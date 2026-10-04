@@ -34,7 +34,7 @@ a{color:var(--accent)}
   <h1>Controle pelo celular</h1>
   <p>No <b>PC</b> abra <a href="palco.html"><b>palco.html</b></a> — é o palco, roda no navegador e toca o áudio. Aqui você entra na sala e manda TOCAR, intensidade, fala e fade — o palco responde na hora.</p>
   <label for="code">Código da sala</label>
-  <input id="code" inputmode="latin" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ex.: K9347XHWV9X7">
+  <input id="code" inputmode="latin" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ex.: K9347X">
   <div class="err" id="err"></div>
   <button id="go">ENTRAR NA SALA</button>
   <p class="hint">Pegue o código no PC: clique em <b>ESPELHAR</b>.<br>
@@ -48,7 +48,7 @@ a{color:var(--accent)}
   i.addEventListener('input',function(){i.value=norm(i.value)});
   function go(){
     var c=norm(i.value);
-    if(c.length<8){err.textContent='o código tem no mínimo 8 caracteres';i.focus();return}
+    if(c.length<6){err.textContent=c.length?'código incompleto — são 6 caracteres':'digite o código da sala';i.focus();return}
     err.textContent='';
     location.href='espelho/PREACH_ESPELHO.html#'+c;
   }
