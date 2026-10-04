@@ -7,7 +7,7 @@
 
 ## Como usar
 
-1. **PC:** abra `https://jholmine50-dotcom.github.io/TheChurchedBeta1/palco.html` (ou o arquivo `PREACH_FLOW_V10_ESPELHO.html`) e clique em **ESPELHAR** — anote o **código da sala**.
+1. **PC:** abra `https://jholmine50-dotcom.github.io/o-pulpito/palco.html` (ou o arquivo `PREACH_FLOW_V10_ESPELHO.html`) e clique em **ESPELHAR** — anote o **código da sala**.
 2. **Celular:** abra o site abaixo, digite o código (**6 caracteres**) e toque em **ENTRAR NA SALA**. Se o código estiver errado ou não houver palco aberto com ele, o celular avisa (**Sala não encontrada**) e pede o código de novo.
 3. No celular aparece o CONTROLE (TOCAR, STOP, intensidade, fala, faixas); o PC executa e o áudio sai dele.
 4. **Slides do Canva:** cole o link de qualquer apresentação em **APRESENTAÇÃO CANVA** (no PC ou no celular). Ela abre em **tela cheia no palco** e no **1/4 superior no controle**, com as setinhas **← →** para passar os slides dos dois lados.
@@ -43,7 +43,7 @@ O controle do celular (`espelho/PREACH_ESPELHO.html`) funciona com as três vers
 
 ## Site (GitHub Pages)
 
-`https://jholmine50-dotcom.github.io/TheChurchedBeta1/`
+`https://jholmine50-dotcom.github.io/o-pulpito/`
 
 - **`palco.html`** — o palco no navegador, com som (baixa as faixas de `audio/`).
 - **`espelho/PREACH_ESPELHO.html`** — controle (36 KB), leve, roda em qualquer celular.
