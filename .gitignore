@@ -43,3 +43,7 @@ forte_work/DATA_Forte.js
 *.err
 dom_out.html
 ui_dump.txt
+
+# --- exceção: ícones do app ---
+!icon/
+!icon/**
