@@ -10,6 +10,18 @@ PREACH FLOW — apresentação com espelho PC ↔ celular (o PC toca o áudio, o
 4. **Slides do Canva:** cole o link de qualquer apresentação em **APRESENTAÇÃO CANVA** (no PC ou no celular). Ela abre em **tela cheia no palco** e no **1/4 superior no controle**, com as setinhas **← →** para passar os slides dos dois lados.
 5. **Laser:** no celular, um **trackpad** ocupa 1/5 inferior da tela — passe o dedo e um ponteiro vermelho aparece no slide e no palco (some sozinho após 5 s parado); no PC, basta mover o mouse sobre o slide. No controle do PC, o botão **MAX** deixa o slide em tela inteira.
 
+## Versões do palco
+
+- **v2 (atual) — `palco.html`**: o palco agora tem **abas no estilo do Chrome**:
+  - **Fundo** — a música de fundo (biblioteca, tocar/stop/fade, linha do tempo, intensidade, fala). A aba mostra um equalizer quando está tocando e a intensidade atual.
+  - **Slide** — a apresentação do Canva: barra com link + ABRIR, ‹ slide N ›, **TELA CHEIA** (para projetar; `Esc` sai) e FECHAR. O slide fica em 16:9, alinhado com o controle do celular, então o laser cai no lugar certo.
+  - Trocar de aba **não para a música**. Quando chega uma apresentação nova (do PC ou do celular), o palco vai sozinho para a aba Slide.
+  - Teclas: `←` `→` / `PgUp` `PgDn` passam slides (funciona com passador), `Alt+1` / `Alt+2` trocam de aba; as teclas antigas continuam (`Espaço` fala, `↑` `↓` intensidade, `F` fade).
+  - **ESPELHAR** + código da sala ficam no canto direito da barra de abas.
+- **v1 (anterior) — `v1/palco.html`**: o palco como era até 25/09, guardado igual (tag git `v1`). Usa as mesmas faixas de `audio/` e o mesmo celular.
+
+O controle do celular (`espelho/PREACH_ESPELHO.html`) não mudou e funciona com as duas versões.
+
 ## Site (GitHub Pages)
 
 `https://jholmine50-dotcom.github.io/TheChurchedBeta1/`
