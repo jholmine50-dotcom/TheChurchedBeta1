@@ -18,7 +18,7 @@ PREACH FLOW — apresentação com espelho PC ↔ celular (o PC toca o áudio, o
   - Trocar de aba **não para a música**. Quando chega uma apresentação nova (do PC ou do celular), o palco vai sozinho para a aba Slide.
   - Teclas: `←` `→` / `PgUp` `PgDn` passam slides (funciona com passador), `Alt+1` / `Alt+2` trocam de aba; as teclas antigas continuam (`Espaço` fala, `↑` `↓` intensidade, `F` fade).
   - **ESPELHAR** + código da sala ficam no canto direito da barra de abas.
-- **v1 (anterior) — `v1/palco.html`**: o palco como era até 25/09, guardado igual (tag git `v1`). Usa as mesmas faixas de `audio/` e o mesmo celular.
+- **v1 (anterior) — `v1/palco.html`**: o palco como era até 25/09, guardado igual (também no branch `v1` do GitHub). Usa as mesmas faixas de `audio/` e o mesmo celular.
 
 O controle do celular (`espelho/PREACH_ESPELHO.html`) não mudou e funciona com as duas versões.
 
