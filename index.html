@@ -27,8 +27,57 @@ button:active{transform:translateY(1px)}
 a{color:var(--accent)}
 .err{color:#ff8f9b;font-size:13px;min-height:18px;margin-top:8px}
 </style>
+<style id="v3-glass">
+/* ===== V3 · Liquid Glass ===== */
+:root{
+  --mood:.5;
+  --lg-fill:rgba(255,255,255,.075);
+  --lg-fill-hover:rgba(255,255,255,.12);
+  --lg-fill-strong:rgba(255,255,255,.16);
+  --lg-edge:rgba(255,255,255,.16);
+  --lg-edge-strong:rgba(255,255,255,.28);
+  --lg-hi:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(255,255,255,.05);
+  --lg-sheen:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,0) 55%);
+  --lg-blur:blur(22px) saturate(175%);
+  --lg-shadow:0 10px 30px rgba(0,0,0,.32);
+  --lg-content:rgba(11,14,20,.58);
+  --lg-content-edge:rgba(255,255,255,.08);
+  --lg-content-blur:blur(26px) saturate(140%);
+}
+html{background:#05070a}
+.lg-ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:#05070a}
+.lg-ambient i{position:absolute;border-radius:50%;filter:blur(70px);opacity:calc(.30 + var(--mood)*.38);transition:opacity 1.2s ease}
+.lg-ambient .a1{width:62vmax;height:62vmax;left:-18vmax;top:-22vmax;
+  background:radial-gradient(circle,hsl(calc(158 - var(--mood)*120) 80% 42%) 0%,transparent 66%)}
+.lg-ambient .a2{width:54vmax;height:54vmax;right:-16vmax;top:8vh;
+  background:radial-gradient(circle,hsl(calc(212 + var(--mood)*95) 75% 45%) 0%,transparent 66%)}
+.lg-ambient .a3{width:58vmax;height:58vmax;left:18vw;bottom:-30vmax;
+  background:radial-gradient(circle,hsl(calc(265 - var(--mood)*235) 70% 40%) 0%,transparent 66%)}
+.lg-ambient::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 120%,rgba(0,0,0,.0),rgba(0,0,0,.35) 70%)}
+@keyframes lgDrift1{to{transform:translate3d(12vw,9vh,0) scale(1.08)}}
+@keyframes lgDrift2{to{transform:translate3d(-10vw,14vh,0) scale(.94)}}
+@keyframes lgDrift3{to{transform:translate3d(-8vw,-10vh,0) scale(1.1)}}
+@media (prefers-reduced-motion:reduce){.lg-ambient i{animation:none}}
+/* acessibilidade: sem transparência => superfícies sólidas */
+@media (prefers-reduced-transparency:reduce){
+  :root{--lg-fill:#1a2029;--lg-fill-hover:#222a35;--lg-fill-strong:#28313d;--lg-content:#0d1117;--lg-blur:none;--lg-content-blur:none}
+  .lg-ambient i{display:none}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :root{--lg-fill:#1a2029;--lg-fill-hover:#222a35;--lg-fill-strong:#28313d;--lg-content:#0d1117}
+}
+
+body{background:transparent!important}
+.card{background:var(--lg-sheen),rgba(14,18,26,.5)!important;border:1px solid var(--lg-edge)!important;border-radius:26px!important;
+  box-shadow:var(--lg-hi),0 24px 70px rgba(0,0,0,.5)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
+input{background:rgba(0,0,0,.3)!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:14px!important}
+input:focus{border-color:rgba(170,255,215,.7)!important}
+button{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),rgba(170,255,210,.9)!important;border:1px solid rgba(255,255,255,.55)!important;border-radius:14px!important;min-height:52px}
+button:active{transform:scale(.98)!important}
+</style>
 </head>
 <body>
+<div class="lg-ambient" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
 <div class="card">
   <div class="kicker">PREACH</div>
   <h1>Controle pelo celular</h1>
@@ -38,8 +87,8 @@ a{color:var(--accent)}
   <div class="err" id="err"></div>
   <button id="go">ENTRAR NA SALA</button>
   <p class="hint">Pegue o código no PC: clique em <b>ESPELHAR</b>.<br>
-  Palco: <a href="palco.html">palco.html</a> (v2) · Controle direto: <a href="espelho/PREACH_ESPELHO.html">espelho/PREACH_ESPELHO.html</a><br>
-  Versão anterior do palco: <a href="v1/palco.html">v1/palco.html</a></p>
+  Palco: <a href="palco.html">palco.html</a> (v3) · Controle direto: <a href="espelho/PREACH_ESPELHO.html">espelho/PREACH_ESPELHO.html</a><br>
+  Versões anteriores do palco: <a href="v2/palco.html">v2</a> · <a href="v1/palco.html">v1</a></p>
 </div>
 <script>
 (function(){

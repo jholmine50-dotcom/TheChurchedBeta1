@@ -12,15 +12,20 @@ PREACH FLOW — apresentação com espelho PC ↔ celular (o PC toca o áudio, o
 
 ## Versões do palco
 
-- **v2 (atual) — `palco.html`**: o palco agora tem **abas no estilo do Chrome**:
+- **v3 (atual) — `palco.html`**: mesma estrutura da v2, com visual **Liquid Glass** (inspirado no design da Apple):
+  - vidro só nos controles e na navegação (barra de abas, biblioteca, botões, barra do slide, setas); conteúdo em cartões escuros legíveis;
+  - fundo ambiente que muda de cor com a **intensidade** (frio no SUAVE, quente no CLÍMAX), estático para não pesar no PC;
+  - o celular (`espelho/`) e a entrada (`index.html`) ganharam o mesmo visual;
+  - quem usa "reduzir transparência" no sistema recebe superfícies sólidas.
+- **v2 (anterior) — `v2/palco.html`** (também no branch `v2`): o palco com **abas no estilo do Chrome**:
   - **Fundo** — a música de fundo (biblioteca, tocar/stop/fade, linha do tempo, intensidade, fala). A aba mostra um equalizer quando está tocando e a intensidade atual.
   - **Slide** — a apresentação do Canva: barra com link + ABRIR, ‹ slide N ›, **TELA CHEIA** (para projetar; `Esc` sai) e FECHAR. O slide fica em 16:9, alinhado com o controle do celular, então o laser cai no lugar certo.
   - Trocar de aba **não para a música**. Quando chega uma apresentação nova (do PC ou do celular), o palco vai sozinho para a aba Slide.
   - Teclas: `←` `→` / `PgUp` `PgDn` passam slides (funciona com passador), `Alt+1` / `Alt+2` trocam de aba; as teclas antigas continuam (`Espaço` fala, `↑` `↓` intensidade, `F` fade).
   - **ESPELHAR** + código da sala ficam no canto direito da barra de abas.
-- **v1 (anterior) — `v1/palco.html`**: o palco como era até 25/09, guardado igual (também no branch `v1` do GitHub). Usa as mesmas faixas de `audio/` e o mesmo celular.
+- **v1 (mais antiga) — `v1/palco.html`**: o palco como era até 25/09, guardado igual (também no branch `v1` do GitHub). Usa as mesmas faixas de `audio/` e o mesmo celular.
 
-O controle do celular (`espelho/PREACH_ESPELHO.html`) não mudou e funciona com as duas versões.
+O controle do celular (`espelho/PREACH_ESPELHO.html`) funciona com as três versões.
 
 ## Site (GitHub Pages)
 

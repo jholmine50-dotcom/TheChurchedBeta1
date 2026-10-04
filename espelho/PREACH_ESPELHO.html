@@ -145,8 +145,90 @@ kbd{border:1px solid #252e39;border-bottom-color:#313b47;border-radius:6px;paddi
 @media(max-width:900px){.grid-top,.grid2{grid-template-columns:1fr}.sets{grid-template-columns:1fr}.cards2{grid-template-columns:1fr}}
 @media(max-width:700px){main,header{padding-left:14px;padding-right:14px}.card{padding:16px;border-radius:18px}.bignum span{font-size:52px}.big-code{font-size:24px;letter-spacing:4px}.scene{font-size:26px}.rowbtns button{min-width:calc(50% - 5px)}footer{flex-direction:column}}
 </style>
+<style id="v3-glass">
+/* ===== V3 · Liquid Glass ===== */
+:root{
+  --mood:.5;
+  --lg-fill:rgba(255,255,255,.075);
+  --lg-fill-hover:rgba(255,255,255,.12);
+  --lg-fill-strong:rgba(255,255,255,.16);
+  --lg-edge:rgba(255,255,255,.16);
+  --lg-edge-strong:rgba(255,255,255,.28);
+  --lg-hi:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(255,255,255,.05);
+  --lg-sheen:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,0) 55%);
+  --lg-blur:blur(22px) saturate(175%);
+  --lg-shadow:0 10px 30px rgba(0,0,0,.32);
+  --lg-content:rgba(11,14,20,.58);
+  --lg-content-edge:rgba(255,255,255,.08);
+  --lg-content-blur:blur(26px) saturate(140%);
+}
+html{background:#05070a}
+.lg-ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:#05070a}
+.lg-ambient i{position:absolute;border-radius:50%;filter:blur(70px);opacity:calc(.30 + var(--mood)*.38);transition:opacity 1.2s ease}
+.lg-ambient .a1{width:62vmax;height:62vmax;left:-18vmax;top:-22vmax;
+  background:radial-gradient(circle,hsl(calc(158 - var(--mood)*120) 80% 42%) 0%,transparent 66%)}
+.lg-ambient .a2{width:54vmax;height:54vmax;right:-16vmax;top:8vh;
+  background:radial-gradient(circle,hsl(calc(212 + var(--mood)*95) 75% 45%) 0%,transparent 66%)}
+.lg-ambient .a3{width:58vmax;height:58vmax;left:18vw;bottom:-30vmax;
+  background:radial-gradient(circle,hsl(calc(265 - var(--mood)*235) 70% 40%) 0%,transparent 66%)}
+.lg-ambient::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 120%,rgba(0,0,0,.0),rgba(0,0,0,.35) 70%)}
+@keyframes lgDrift1{to{transform:translate3d(12vw,9vh,0) scale(1.08)}}
+@keyframes lgDrift2{to{transform:translate3d(-10vw,14vh,0) scale(.94)}}
+@keyframes lgDrift3{to{transform:translate3d(-8vw,-10vh,0) scale(1.1)}}
+@media (prefers-reduced-motion:reduce){.lg-ambient i{animation:none}}
+/* acessibilidade: sem transparência => superfícies sólidas */
+@media (prefers-reduced-transparency:reduce){
+  :root{--lg-fill:#1a2029;--lg-fill-hover:#222a35;--lg-fill-strong:#28313d;--lg-content:#0d1117;--lg-blur:none;--lg-content-blur:none}
+  .lg-ambient i{display:none}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :root{--lg-fill:#1a2029;--lg-fill-hover:#222a35;--lg-fill-strong:#28313d;--lg-content:#0d1117}
+}
+
+html,body{background:transparent!important}
+
+.card,.role-card,.join{background:var(--lg-content)!important;border:1px solid var(--lg-content-edge)!important;border-radius:24px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 18px 50px rgba(0,0,0,.35)!important;-webkit-backdrop-filter:var(--lg-content-blur);backdrop-filter:var(--lg-content-blur)}
+.role-card:hover{border-color:var(--lg-edge-strong)!important}
+.btn,.rowbtns button,.talk,.set-opt,.chip,.mini,.pill,.mode-badge{background:var(--lg-sheen),var(--lg-fill)!important;border:1px solid var(--lg-edge)!important;
+  box-shadow:var(--lg-hi),0 6px 18px rgba(0,0,0,.25)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
+.btn,.rowbtns button,.talk,.set-opt,.chip{border-radius:16px!important;transition:transform .12s ease,background .14s ease}
+.btn:active,.rowbtns button:active,.talk:active,.set-opt:active,.chip:active{transform:scale(.97)}
+.btn.primary,.rowbtns .primary{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),rgba(170,255,210,.9)!important;color:#05140c!important;border-color:rgba(255,255,255,.55)!important}
+.rowbtns .danger{background:var(--lg-sheen),rgba(255,90,110,.18)!important;border-color:rgba(255,140,155,.38)!important;color:#ffd0d6!important}
+.rowbtns button.active{background:var(--lg-sheen),rgba(96,165,250,.28)!important;color:#dbeaff!important;border-color:rgba(150,195,255,.5)!important}
+.talk{min-height:64px}
+.talk.active{background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0) 60%),rgba(255,206,110,.92)!important;color:#2a1a00!important;border-color:rgba(255,255,255,.55)!important}
+.set-opt.active,.chip.on,.chip.active{background:var(--lg-sheen),rgba(143,240,194,.22)!important;border-color:rgba(170,255,215,.5)!important;color:#e2fff0!important}
+.chip.off,.chip.muted{background:var(--lg-sheen),rgba(255,90,110,.16)!important;border-color:rgba(255,140,155,.35)!important}
+.pill.on{color:#bfffe0!important;border-color:rgba(143,240,194,.45)!important}
+.pill.warn{color:#ffe1b0!important;border-color:rgba(255,206,110,.45)!important}
+.pill.bad{color:#ffc2ca!important;border-color:rgba(255,140,155,.45)!important}
+.mini{border-radius:99px!important;color:#fff!important;padding:7px 12px!important;font-weight:800!important;letter-spacing:1px}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:10px!important;background:rgba(255,255,255,.10)!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.45)}
+input[type=range]::-webkit-slider-thumb{width:32px!important;height:32px!important;margin-top:-11px!important;border:1px solid rgba(255,255,255,.75)!important;
+  background:radial-gradient(circle at 35% 30%,#fff 0%,rgba(255,255,255,.85) 35%,rgba(210,255,232,.7) 100%)!important;
+  box-shadow:0 0 0 7px rgba(143,240,194,.14),0 8px 22px rgba(0,0,0,.45),inset 0 -2px 4px rgba(0,0,0,.15)!important}
+input[type=range]::-moz-range-thumb{width:30px;height:30px;border:1px solid rgba(255,255,255,.75);background:radial-gradient(circle at 35% 30%,#fff,rgba(210,255,232,.75))}
+.linkrow input,.join input{background:rgba(0,0,0,.28)!important;border:1px solid rgba(255,255,255,.12)!important;border-radius:13px!important}
+.cv-quarter{background:var(--lg-sheen),rgba(10,13,19,.55)!important;border-bottom:1px solid var(--lg-edge)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
+.cv-arrow,.cv-close,.cv-max{background:var(--lg-sheen),rgba(14,18,26,.5)!important;border:1px solid var(--lg-edge)!important;box-shadow:var(--lg-hi),0 6px 18px rgba(0,0,0,.3)!important;
+  -webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
+.cv-pad{background:var(--lg-sheen),rgba(10,13,19,.6)!important;border-top:1px solid var(--lg-edge)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
+.toast{background:var(--lg-sheen),rgba(20,26,36,.6)!important;border:1px solid var(--lg-edge)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);box-shadow:var(--lg-hi),var(--lg-shadow)!important}
+.room-gate{background:transparent!important}
+.rg-card{background:var(--lg-sheen),rgba(14,18,26,.5)!important;border:1px solid var(--lg-edge)!important;border-radius:26px!important;box-shadow:var(--lg-hi),0 24px 70px rgba(0,0,0,.5)!important;
+  -webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
+.rg-in{background:rgba(0,0,0,.3)!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:14px!important}
+.rg-go{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),rgba(170,255,210,.9)!important;border-radius:14px!important}
+.rg-retry{background:var(--lg-sheen),var(--lg-fill)!important;border:1px solid var(--lg-edge)!important;border-radius:14px!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
+
+.room-gate{background:rgba(5,7,10,.35)!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+</style>
 </head>
 <body>
+<div class="lg-ambient" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
 
 <section id="chooser">
   <div class="cw">
@@ -748,6 +830,7 @@ function startLocal(){
   }catch(e){bc=null}
 }
 function renderScene(){
+  try{document.documentElement.style.setProperty('--mood',String(Math.max(0,Math.min(100,+(S.expr)||0))/100))}catch(e){}
   const sc=sceneOf(S.expr);
   $('sceneName').textContent=sc[1];
   $('sceneDesc').textContent=sc[2];

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PREACH FLOW V3 — Palco</title>
+<title>PREACH FLOW V2 — Palco (versão anterior)</title>
 <link rel="icon" href="data:,">
 <style>*{box-sizing:border-box}
 :root{
@@ -294,176 +294,10 @@ body.v2.slide-full.pe-host #pe-cvStage:hover .cv-arrow{opacity:.85}
 body.v2.slide-full.idle,body.v2.slide-full.idle *{cursor:none!important}
 body.v2.slide-full.idle.pe-host #pe-cvStage .cv-arrow{opacity:0!important}
 </style>
-<style id="v3-glass">
-/* ===== V3 · Liquid Glass ===== */
-:root{
-  --mood:.5;
-  --lg-fill:rgba(255,255,255,.075);
-  --lg-fill-hover:rgba(255,255,255,.12);
-  --lg-fill-strong:rgba(255,255,255,.16);
-  --lg-edge:rgba(255,255,255,.16);
-  --lg-edge-strong:rgba(255,255,255,.28);
-  --lg-hi:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(255,255,255,.05);
-  --lg-sheen:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,0) 55%);
-  --lg-blur:blur(22px) saturate(175%);
-  --lg-shadow:0 10px 30px rgba(0,0,0,.32);
-  --lg-content:rgba(11,14,20,.58);
-  --lg-content-edge:rgba(255,255,255,.08);
-  --lg-content-blur:blur(26px) saturate(140%);
-}
-html{background:#05070a}
-.lg-ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:#05070a}
-.lg-ambient i{position:absolute;border-radius:50%;filter:blur(70px);opacity:calc(.30 + var(--mood)*.38);transition:opacity 1.2s ease}
-.lg-ambient .a1{width:62vmax;height:62vmax;left:-18vmax;top:-22vmax;
-  background:radial-gradient(circle,hsl(calc(158 - var(--mood)*120) 80% 42%) 0%,transparent 66%)}
-.lg-ambient .a2{width:54vmax;height:54vmax;right:-16vmax;top:8vh;
-  background:radial-gradient(circle,hsl(calc(212 + var(--mood)*95) 75% 45%) 0%,transparent 66%)}
-.lg-ambient .a3{width:58vmax;height:58vmax;left:18vw;bottom:-30vmax;
-  background:radial-gradient(circle,hsl(calc(265 - var(--mood)*235) 70% 40%) 0%,transparent 66%)}
-.lg-ambient::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 120%,rgba(0,0,0,.0),rgba(0,0,0,.35) 70%)}
-@keyframes lgDrift1{to{transform:translate3d(12vw,9vh,0) scale(1.08)}}
-@keyframes lgDrift2{to{transform:translate3d(-10vw,14vh,0) scale(.94)}}
-@keyframes lgDrift3{to{transform:translate3d(-8vw,-10vh,0) scale(1.1)}}
-@media (prefers-reduced-motion:reduce){.lg-ambient i{animation:none}}
-/* acessibilidade: sem transparência => superfícies sólidas */
-@media (prefers-reduced-transparency:reduce){
-  :root{--lg-fill:#1a2029;--lg-fill-hover:#222a35;--lg-fill-strong:#28313d;--lg-content:#0d1117;--lg-blur:none;--lg-content-blur:none}
-  .lg-ambient i{display:none}
-}
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  :root{--lg-fill:#1a2029;--lg-fill-hover:#222a35;--lg-fill-strong:#28313d;--lg-content:#0d1117}
-}
-
-body.v2{background:transparent!important}
-:root{--bg:transparent;--radius:20px;--radius-sm:14px}
-.panel{background:var(--lg-content)!important;border:1px solid var(--lg-content-edge)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 18px 50px rgba(0,0,0,.35)!important;-webkit-backdrop-filter:var(--lg-content-blur);backdrop-filter:var(--lg-content-blur);border-radius:22px;}
-
-body.mode-base .transport-panel{border-radius:22px 22px 0 0}
-body.mode-base .timeline-card{border-radius:0}
-body.mode-base .expression-card{border-radius:0 0 22px 22px}
-.app-header{border-bottom-color:rgba(255,255,255,.07)!important}
-.brand-mark,.ts-brand{box-shadow:var(--lg-hi),0 6px 18px rgba(74,222,128,.25)}
-/* barra lateral = vidro (navegação) */
-.music-dock{background:var(--lg-sheen),var(--lg-fill)!important;border:1px solid var(--lg-edge)!important;box-shadow:var(--lg-hi),var(--lg-shadow)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);border-width:0 1px 0 0!important;box-shadow:inset -1px 0 0 rgba(255,255,255,.05)!important}
-
-.music-opt{border-radius:14px!important}
-.music-opt:hover{background:var(--lg-fill-hover)!important;border-color:var(--lg-edge)!important}
-.music-opt.active{background:var(--lg-sheen),var(--lg-fill)!important;border:1px solid var(--lg-edge)!important;box-shadow:var(--lg-hi),var(--lg-shadow)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);border-radius:14px;color:#d9ffe9!important}
-
-.music-opt.active .mo-sub{color:#9fe6bb}
-/* faixa de abas: barra de vidro flutuante com abas-pílula */
-.tabstrip{top:8px!important;left:10px!important;right:10px!important;height:calc(var(--ts-h) - 4px)!important;align-items:center!important;
-  padding:0 6px!important;border-radius:16px;border:1px solid var(--lg-edge)!important;
-  background:var(--lg-sheen),rgba(14,18,26,.48)!important;box-shadow:var(--lg-hi),0 12px 34px rgba(0,0,0,.4);
-  -webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
-body.v2{padding-top:calc(var(--ts-h) + 12px)!important}
-body.v2.pe-cell{padding-top:0!important}
-@media (min-width:961px){body.v2 .music-dock{top:calc(var(--ts-h) + 12px)!important;height:calc(100vh - var(--ts-h) - 12px)!important;border-radius:0 18px 0 0}}
-.ts-tab{height:34px!important;margin:0 2px!important;border-radius:11px!important;border:1px solid transparent!important}
-.ts-tab::before,.ts-tab::after{display:none!important}
-.ts-tab:hover{background:var(--lg-fill)!important}
-.ts-tab.active{background:var(--lg-sheen),var(--lg-fill)!important;border:1px solid var(--lg-edge)!important;box-shadow:var(--lg-hi),var(--lg-shadow)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);border-radius:11px;color:#fff!important}
-
-.ts-brand{margin-left:4px}
-.ts-mirror{background:var(--lg-sheen),var(--lg-fill)!important;border:1px solid var(--lg-edge)!important;box-shadow:var(--lg-hi),var(--lg-shadow)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);border-radius:11px;height:32px}
-
-.ts-mirror.active{background:rgba(143,240,194,.9)!important;color:#06120c!important}
-.ts-mirror:hover{border-color:var(--lg-edge-strong)!important}
-body.v2.pe-host #pe-app{top:calc(var(--ts-h) + 12px)!important}
-/* botões */
-.main-controls button,.loop-btn,.mute-btn,.talk-btn,.mode-switch{background:var(--lg-sheen),var(--lg-fill)!important;border:1px solid var(--lg-edge)!important;box-shadow:var(--lg-hi),var(--lg-shadow)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);}
-
-.main-controls button,.loop-btn,.talk-btn{border-radius:14px!important}
-.main-controls button:hover,.loop-btn:hover,.talk-btn:hover{background:var(--lg-sheen),var(--lg-fill-hover)!important;border-color:var(--lg-edge-strong)!important;filter:none!important}
-.main-controls button:active,.loop-btn:active,.talk-btn:active,.sl-btn:active,.ts-mirror:active{transform:scale(.97)!important}
-.main-controls .primary{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),rgba(170,255,210,.88)!important;color:#05140c!important;border-color:rgba(255,255,255,.55)!important}
-.main-controls .primary:hover{background:linear-gradient(180deg,rgba(255,255,255,.65),rgba(255,255,255,0) 60%),rgba(190,255,222,.95)!important;border-color:rgba(255,255,255,.7)!important}
-.main-controls #stop{background:var(--lg-sheen),rgba(255,90,110,.16)!important;border-color:rgba(255,140,155,.35)!important;color:#ffd0d6!important}
-.main-controls #fadeBtn{background:var(--lg-sheen),rgba(255,200,90,.12)!important;border-color:rgba(255,215,140,.3)!important;color:#ffe9b8!important}
-.loop-btn.active{background:var(--lg-sheen),rgba(96,165,250,.28)!important;color:#dbeaff!important;border-color:rgba(150,195,255,.5)!important}
-.talk-btn{min-height:56px}
-.talk-btn.active{background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0) 60%),rgba(255,206,110,.9)!important;color:#2a1a00!important;border-color:rgba(255,255,255,.55)!important}
-.mode-switch{border-radius:99px!important;padding:3px!important}
-.mode-opt.active{background:rgba(255,255,255,.16)!important;color:#fff!important;border-color:rgba(255,255,255,.25)!important;box-shadow:var(--lg-hi)}
-.pill,.tail-badge,.kbd,.t-badge{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.12)!important}
-.mute-btn{border-radius:10px!important}
-.mute-btn.muted{background:var(--lg-sheen),rgba(255,90,110,.2)!important;color:#ffc2ca!important}
-.item,.track-item{background:rgba(255,255,255,.035)!important;border-color:rgba(255,255,255,.07)!important;border-radius:14px!important}
-.meter{background:rgba(255,255,255,.08)!important}
-/* sliders: canaleta + conta de vidro */
-input[type=range]{-webkit-appearance:none;appearance:none;background:transparent}
-input[type=range]::-webkit-slider-runnable-track{height:8px!important;background:rgba(255,255,255,.10)!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.45)}
-input[type=range]::-webkit-slider-thumb{width:26px!important;height:26px!important;margin-top:-9px!important;border:1px solid rgba(255,255,255,.7)!important;
-  background:radial-gradient(circle at 35% 30%,#fff 0%,rgba(255,255,255,.85) 35%,rgba(210,255,232,.7) 100%)!important;
-  box-shadow:0 0 0 6px rgba(143,240,194,.14),0 6px 18px rgba(0,0,0,.45),inset 0 -2px 4px rgba(0,0,0,.15)!important}
-input[type=range]::-moz-range-track{height:8px;background:rgba(255,255,255,.10)}
-input[type=range]::-moz-range-thumb{width:24px;height:24px;border:1px solid rgba(255,255,255,.7);background:radial-gradient(circle at 35% 30%,#fff,rgba(210,255,232,.75))}
-.timeline-row input::-webkit-slider-thumb{box-shadow:0 0 0 6px rgba(96,165,250,.16),0 6px 18px rgba(0,0,0,.45)!important}
-/* aba Slide: barra vira cápsula de vidro flutuando sobre o slide */
-.slide-panel{background:transparent!important;top:calc(var(--ts-h) + 12px)!important}
-.sl-bar{background:var(--lg-sheen),var(--lg-fill)!important;border:1px solid var(--lg-edge)!important;box-shadow:var(--lg-hi),var(--lg-shadow)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);border-radius:16px;margin:0 10px;height:52px!important;padding:0 8px!important;border-bottom:1px solid var(--lg-edge)!important}
-.sl-btn{background:var(--lg-sheen),var(--lg-fill)!important;border:1px solid var(--lg-edge)!important;box-shadow:var(--lg-hi),var(--lg-shadow)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);border-radius:11px;}
-
-.sl-btn:hover:not([disabled]){background:var(--lg-sheen),var(--lg-fill-hover)!important;border-color:var(--lg-edge-strong)!important}
-.sl-btn.primary{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),rgba(170,255,210,.88)!important;color:#05140c!important}
-.sl-btn.primary:hover:not([disabled]){background:linear-gradient(180deg,rgba(255,255,255,.65),rgba(255,255,255,0) 60%),rgba(190,255,222,.95)!important;border-color:rgba(255,255,255,.7)!important}
-.sl-url{background:rgba(0,0,0,.28)!important;border:1px solid rgba(255,255,255,.12)!important;border-radius:11px!important}
-.sl-sep{background:rgba(255,255,255,.12)!important}
-body.v2.pe-host #pe-cvStage.cv-full{top:calc(var(--ts-h) + 12px + 62px)!important}
-body.v2.pe-host #pe-cvStage.cv-full .cv-frame{border-radius:14px!important;border-color:rgba(255,255,255,.12)!important}
-#espelhoRoot .cv-arrow{background:var(--lg-sheen),rgba(14,18,26,.45)!important;border:1px solid var(--lg-edge)!important;box-shadow:var(--lg-hi),var(--lg-shadow)!important;
-  -webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);border-radius:16px!important}
-body.v2.slide-full.pe-host #pe-cvStage.cv-full{top:0!important}
-body.v2.slide-full .slide-panel{top:0!important}
-body.v2.slide-full .lg-ambient{display:none}
-
-#espelhoRoot .card,#espelhoRoot .role-card,#espelhoRoot .join{background:var(--lg-content)!important;border:1px solid var(--lg-content-edge)!important;border-radius:24px!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 18px 50px rgba(0,0,0,.35)!important;-webkit-backdrop-filter:var(--lg-content-blur);backdrop-filter:var(--lg-content-blur)}
-#espelhoRoot .role-card:hover{border-color:var(--lg-edge-strong)!important}
-#espelhoRoot .btn,#espelhoRoot .rowbtns button,#espelhoRoot .talk,#espelhoRoot .set-opt,#espelhoRoot .chip,#espelhoRoot .mini,#espelhoRoot .pill,#espelhoRoot .mode-badge{background:var(--lg-sheen),var(--lg-fill)!important;border:1px solid var(--lg-edge)!important;
-  box-shadow:var(--lg-hi),0 6px 18px rgba(0,0,0,.25)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
-#espelhoRoot .btn,#espelhoRoot .rowbtns button,#espelhoRoot .talk,#espelhoRoot .set-opt,#espelhoRoot .chip{border-radius:16px!important;transition:transform .12s ease,background .14s ease}
-#espelhoRoot .btn:active,#espelhoRoot .rowbtns button:active,#espelhoRoot .talk:active,#espelhoRoot .set-opt:active,#espelhoRoot .chip:active{transform:scale(.97)}
-#espelhoRoot .btn.primary,#espelhoRoot .rowbtns .primary{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),rgba(170,255,210,.9)!important;color:#05140c!important;border-color:rgba(255,255,255,.55)!important}
-#espelhoRoot .rowbtns .danger{background:var(--lg-sheen),rgba(255,90,110,.18)!important;border-color:rgba(255,140,155,.38)!important;color:#ffd0d6!important}
-#espelhoRoot .rowbtns button.active{background:var(--lg-sheen),rgba(96,165,250,.28)!important;color:#dbeaff!important;border-color:rgba(150,195,255,.5)!important}
-#espelhoRoot .talk{min-height:64px}
-#espelhoRoot .talk.active{background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0) 60%),rgba(255,206,110,.92)!important;color:#2a1a00!important;border-color:rgba(255,255,255,.55)!important}
-#espelhoRoot .set-opt.active,#espelhoRoot .chip.on,#espelhoRoot .chip.active{background:var(--lg-sheen),rgba(143,240,194,.22)!important;border-color:rgba(170,255,215,.5)!important;color:#e2fff0!important}
-#espelhoRoot .chip.off,#espelhoRoot .chip.muted{background:var(--lg-sheen),rgba(255,90,110,.16)!important;border-color:rgba(255,140,155,.35)!important}
-#espelhoRoot .pill.on{color:#bfffe0!important;border-color:rgba(143,240,194,.45)!important}
-#espelhoRoot .pill.warn{color:#ffe1b0!important;border-color:rgba(255,206,110,.45)!important}
-#espelhoRoot .pill.bad{color:#ffc2ca!important;border-color:rgba(255,140,155,.45)!important}
-#espelhoRoot .mini{border-radius:99px!important;color:#fff!important;padding:7px 12px!important;font-weight:800!important;letter-spacing:1px}
-#espelhoRoot input[type=range]{-webkit-appearance:none;appearance:none;background:transparent}
-#espelhoRoot input[type=range]::-webkit-slider-runnable-track{height:10px!important;background:rgba(255,255,255,.10)!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.45)}
-#espelhoRoot input[type=range]::-webkit-slider-thumb{width:32px!important;height:32px!important;margin-top:-11px!important;border:1px solid rgba(255,255,255,.75)!important;
-  background:radial-gradient(circle at 35% 30%,#fff 0%,rgba(255,255,255,.85) 35%,rgba(210,255,232,.7) 100%)!important;
-  box-shadow:0 0 0 7px rgba(143,240,194,.14),0 8px 22px rgba(0,0,0,.45),inset 0 -2px 4px rgba(0,0,0,.15)!important}
-#espelhoRoot input[type=range]::-moz-range-thumb{width:30px;height:30px;border:1px solid rgba(255,255,255,.75);background:radial-gradient(circle at 35% 30%,#fff,rgba(210,255,232,.75))}
-#espelhoRoot .linkrow input,#espelhoRoot .join input{background:rgba(0,0,0,.28)!important;border:1px solid rgba(255,255,255,.12)!important;border-radius:13px!important}
-#espelhoRoot .cv-quarter{background:var(--lg-sheen),rgba(10,13,19,.55)!important;border-bottom:1px solid var(--lg-edge)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
-#espelhoRoot .cv-arrow,#espelhoRoot .cv-close,#espelhoRoot .cv-max{background:var(--lg-sheen),rgba(14,18,26,.5)!important;border:1px solid var(--lg-edge)!important;box-shadow:var(--lg-hi),0 6px 18px rgba(0,0,0,.3)!important;
-  -webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
-#espelhoRoot .cv-pad{background:var(--lg-sheen),rgba(10,13,19,.6)!important;border-top:1px solid var(--lg-edge)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
-#espelhoRoot .toast{background:var(--lg-sheen),rgba(20,26,36,.6)!important;border:1px solid var(--lg-edge)!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);box-shadow:var(--lg-hi),var(--lg-shadow)!important}
-#espelhoRoot .room-gate{background:transparent!important}
-#espelhoRoot .rg-card{background:var(--lg-sheen),rgba(14,18,26,.5)!important;border:1px solid var(--lg-edge)!important;border-radius:26px!important;box-shadow:var(--lg-hi),0 24px 70px rgba(0,0,0,.5)!important;
-  -webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
-#espelhoRoot .rg-in{background:rgba(0,0,0,.3)!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:14px!important}
-#espelhoRoot .rg-go{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 60%),rgba(170,255,210,.9)!important;border-radius:14px!important}
-#espelhoRoot .rg-retry{background:var(--lg-sheen),var(--lg-fill)!important;border:1px solid var(--lg-edge)!important;border-radius:14px!important;-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
-
-body.pe-host #pe-app{background:rgba(5,7,10,.35)!important;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-body.pe-cell #espelhoRoot{background:transparent!important}
-body.pe-cell{background:transparent!important}
-#pe-roomGate{background:rgba(5,7,10,.35)!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-</style>
 </head>
 <body class="mode-base v2 tab-fundo">
-<div class="lg-ambient" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
 <nav class="tabstrip" id="tabstrip" aria-label="Áreas do palco">
-  <div class="ts-brand" title="PREACH FLOW V3">PF</div>
+  <div class="ts-brand" title="PREACH FLOW V2">PF</div>
   <div role="tablist" aria-label="Áreas do palco" style="display:contents">
     <button class="ts-tab active" id="tab-fundo" role="tab" data-tab="fundo" aria-selected="true" aria-controls="panel-fundo" type="button" title="Fundo · música (Alt+1)">
       <svg class="ts-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span class="ts-label">Fundo</span><span class="ts-meta" id="tsFundoMeta">parado</span><span class="ts-eq" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -516,7 +350,7 @@ body.pe-cell{background:transparent!important}
         <div class="brand-mark">PF</div>
         <div>
           <div class="brand">PREACH FLOW</div>
-          <div class="muted">instrumento de expressão emocional para pregação · V3</div>
+          <div class="muted">instrumento de expressão emocional para pregação · V2</div>
         </div>
       </div>
       <div class="header-right">
@@ -622,18 +456,18 @@ body.pe-cell{background:transparent!important}
 </script>
 <script>
 const MUSICS={
-  original:{label:"Original",tracks:{"Backing_Vocals":"audio/original/Backing_Vocals.mp3","Drums":"audio/original/Drums.mp3","Bass":"audio/original/Bass.mp3","Keyboard":"audio/original/Keyboard.mp3","Percussion":"audio/original/Percussion.mp3","Strings":"audio/original/Strings.mp3","Synth":"audio/original/Synth.mp3","FX":"audio/original/FX.mp3","Brass":"audio/original/Brass.mp3","Woodwinds":"audio/original/Woodwinds.mp3"}},
-  oceans:{label:"Agnus Dei",tracks:{"Drums":"audio/oceans/Drums.mp3","Bass":"audio/oceans/Bass.mp3","Keyboard":"audio/oceans/Keyboard.mp3","Percussion":"audio/oceans/Percussion.mp3","Strings":"audio/oceans/Strings.mp3","Synth":"audio/oceans/Synth.mp3","FX":"audio/oceans/FX.mp3","Brass":"audio/oceans/Brass.mp3","Woodwinds":"audio/oceans/Woodwinds.mp3"}},
+  original:{label:"Original",tracks:{"Backing_Vocals":"../audio/original/Backing_Vocals.mp3","Drums":"../audio/original/Drums.mp3","Bass":"../audio/original/Bass.mp3","Keyboard":"../audio/original/Keyboard.mp3","Percussion":"../audio/original/Percussion.mp3","Strings":"../audio/original/Strings.mp3","Synth":"../audio/original/Synth.mp3","FX":"../audio/original/FX.mp3","Brass":"../audio/original/Brass.mp3","Woodwinds":"../audio/original/Woodwinds.mp3"}},
+  oceans:{label:"Agnus Dei",tracks:{"Drums":"../audio/oceans/Drums.mp3","Bass":"../audio/oceans/Bass.mp3","Keyboard":"../audio/oceans/Keyboard.mp3","Percussion":"../audio/oceans/Percussion.mp3","Strings":"../audio/oceans/Strings.mp3","Synth":"../audio/oceans/Synth.mp3","FX":"../audio/oceans/FX.mp3","Brass":"../audio/oceans/Brass.mp3","Woodwinds":"../audio/oceans/Woodwinds.mp3"}},
   forte:{label:"Oração Forte",tracks:{
-"Drums":"audio/forte/Drums.mp3",
-"Bass":"audio/forte/Bass.mp3",
-"Keyboard":"audio/forte/Keyboard.mp3",
-"Percussion":"audio/forte/Percussion.mp3",
-"Strings":"audio/forte/Strings.mp3",
-"Synth":"audio/forte/Synth.mp3",
-"FX":"audio/forte/FX.mp3",
-"Brass":"audio/forte/Brass.mp3",
-"Woodwinds":"audio/forte/Woodwinds.mp3"
+"Drums":"../audio/forte/Drums.mp3",
+"Bass":"../audio/forte/Bass.mp3",
+"Keyboard":"../audio/forte/Keyboard.mp3",
+"Percussion":"../audio/forte/Percussion.mp3",
+"Strings":"../audio/forte/Strings.mp3",
+"Synth":"../audio/forte/Synth.mp3",
+"FX":"../audio/forte/FX.mp3",
+"Brass":"../audio/forte/Brass.mp3",
+"Woodwinds":"../audio/forte/Woodwinds.mp3"
 }},
 };
 let currentSet="original";
@@ -1666,7 +1500,6 @@ function startLocal(){
   }catch(e){bc=null}
 }
 function renderScene(){
-  if(role!=='palco')try{document.documentElement.style.setProperty('--mood',String(Math.max(0,Math.min(100,+(S.expr)||0))/100))}catch(e){}
   const sc=sceneOf(S.expr);
   $('sceneName').textContent=sc[1];
   $('sceneDesc').textContent=sc[2];
@@ -1990,7 +1823,6 @@ function v2Idle(){
 }
 function v2Tick(){
   try{
-    try{document.documentElement.style.setProperty('--mood',String(Math.max(0,Math.min(100,+((typeof expression!=='undefined'?expression:S.expr))||0))/100))}catch(e){}
     const ft=document.getElementById('tab-fundo'),fm=document.getElementById('tsFundoMeta');
     const playing=typeof started!=='undefined'&&!!started;
     if(ft)ft.classList.toggle('playing',playing);
