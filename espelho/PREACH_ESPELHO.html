@@ -4,8 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<link rel="icon" href="data:,">
-<title>PREACH ESPELHO - palco + controle num arquivo só</title>
+<link rel="icon" type="image/png" href="../icon/pulpito-64.png">
+<link rel="apple-touch-icon" href="../icon/pulpito-180.png">
+<meta name="theme-color" content="#05070a">
+<title>O Púlpito — Controle</title>
 <style>
 *{box-sizing:border-box}
 :root{--bg:#07090d;--panel:#10141b;--panel2:#0c1016;--line:#232a35;--text:#f4f7fa;--muted:#7f8a98;--accent:#8ff0c2;--accent2:#8ec5ff;--danger:#ff8f9b;--shadow:0 20px 60px rgba(0,0,0,.35)}
@@ -226,6 +228,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:1px solid rgba
 
 .room-gate{background:rgba(5,7,10,.35)!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 </style>
+<style>.mark,.brand-mark,.ts-brand{padding:0!important;overflow:hidden;background:none!important}</style>
 </head>
 <body>
 <div class="lg-ambient" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
@@ -233,9 +236,9 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:1px solid rgba
 <section id="chooser">
   <div class="cw">
     <div class="brand">
-      <div class="mark">E</div>
+      <div class="mark"><img src="../icon/pulpito-192.png" alt="" style="width:100%;height:100%;display:block;border-radius:inherit;object-fit:cover"></div>
       <div>
-        <div class="bt">PREACH ESPELHO</div>
+        <div class="bt">O PÚLPITO · CONTROLE</div>
         <div class="bs">um arquivo só · palco + controle · espelhamento em tempo real</div>
       </div>
     </div>
@@ -263,9 +266,9 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:1px solid rgba
 <div id="app" class="hidden">
   <header>
     <div class="hleft">
-      <div class="mark sm">E</div>
+      <div class="mark sm"><img src="../icon/pulpito-192.png" alt="" style="width:100%;height:100%;display:block;border-radius:inherit;object-fit:cover"></div>
       <div>
-        <div class="bt2">PREACH ESPELHO</div>
+        <div class="bt2">O PÚLPITO · CONTROLE</div>
       </div>
       <div class="mode-badge" id="modeBadge">PALCO</div>
     </div>

@@ -1,4 +1,4 @@
-/* PREACH FLOW · login da igreja (SIMULADO — fase de desenvolvimento)
+/* O Púlpito · login da igreja (SIMULADO — fase de desenvolvimento)
  *
  * O "banco de dados" é simulado no navegador (localStorage 'pf.db').
  * A senha NUNCA é guardada crua. Ela passa por DUAS codificações de mão única:
@@ -99,8 +99,8 @@ function tela(){
     const w=document.createElement('div');w.id='pfAuth';w.setAttribute('role','dialog');w.setAttribute('aria-modal','true');w.setAttribute('aria-labelledby','auT');
     const temIgreja=Object.keys(dbRead().igrejas).length>0;
     w.innerHTML=`<form class="au-card" autocomplete="on" novalidate>
-      <div class="au-mark">PF</div>
-      <h1 id="auT">PREACH FLOW</h1>
+      <div class="au-mark" style="overflow:hidden;background:none"><img src="icon/pulpito-192.png" alt="" style="width:100%;height:100%;display:block"></div>
+      <h1 id="auT">O Púlpito</h1>
       <p class="au-sub">Entre com a sua igreja para abrir o palco.</p>
       <div class="au-seg" role="tablist"><button type="button" data-m="entrar" role="tab">ENTRAR</button><button type="button" data-m="criar" role="tab">CRIAR IGREJA</button></div>
       <label for="auNome">NOME DA IGREJA</label><input type="text" id="auNome" autocomplete="username" placeholder="ex.: Igreja Batista Central" required>

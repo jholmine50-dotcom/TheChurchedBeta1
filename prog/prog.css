@@ -1,4 +1,4 @@
-/* PREACH FLOW · aba Programação (Liquid Glass) */
+/* O Púlpito · aba Programação (Liquid Glass) */
 .prog-panel{position:fixed;top:calc(var(--ts-h) + 12px);left:0;right:0;bottom:0;overflow:auto;z-index:5}
 .pg-wrap{position:relative;max-width:1280px;margin:0 auto;padding:4px 16px 40px}
 .pg-btn{height:38px;padding:0 14px;border-radius:12px;border:1px solid var(--lg-edge,rgba(255,255,255,.16));color:#eef4f8;cursor:pointer;white-space:nowrap;

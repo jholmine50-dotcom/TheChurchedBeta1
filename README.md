@@ -1,6 +1,9 @@
-# Churched
+# O Púlpito
 
-PREACH FLOW — apresentação com espelho PC ↔ celular (o PC toca o áudio, o celular controla).
+<img src="icon/pulpito-192.png" width="96" alt="ícone O Púlpito">
+
+
+**O Púlpito** (antes PREACH FLOW) — música de fundo, slides e programação do culto, com espelho PC ↔ celular (o PC toca o áudio, o celular controla).
 
 ## Como usar
 

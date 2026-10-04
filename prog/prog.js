@@ -1,4 +1,4 @@
-/* PREACH FLOW · aba Programação do palco */
+/* O Púlpito · aba Programação do palco */
 (function(){
 'use strict';
 const C=window.PFCore;
@@ -552,7 +552,7 @@ async function exportImage(fmt){
   el.innerHTML=`<div class="pp-h"><small>${C.esc(sess.nome)}</small><h1>${C.esc(P.titulo)}</h1><span>${C.esc(dataTxt)}</span></div>
     ${C.sorted(P.items).map(it=>{const s=st.map[it.id];return `<div class="pp-it st-${s.state}"><div class="pp-t">${C.esc(it.hora||'--:--')}</div><span class="pg-dot st-${s.state}"></span>
       <div class="pp-c"><b>${C.esc(it.titulo)}</b>${it.estado==='ignorado'?' <em>(não acontecerá)</em>':''}${it.texto?`<p>${C.renderText(it.texto,bn).replace(/<svg[\s\S]*?<\/svg>/g,'')}</p>`:''}</div></div>`}).join('')}
-    <div class="pp-f">Gerado pelo PREACH FLOW · ${new Date().toLocaleString('pt-BR')}</div>`;
+    <div class="pp-f">Gerado com O Púlpito · ${new Date().toLocaleString('pt-BR')}</div>`;
   document.body.appendChild(el);
   const name=(C.cleanName(P.titulo)||'programacao');
   const save=(href,fn)=>{const a=document.createElement('a');a.href=href;a.download=fn;document.body.appendChild(a);a.click();a.remove()};

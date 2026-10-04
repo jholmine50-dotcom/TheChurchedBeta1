@@ -1,4 +1,4 @@
-/* PREACH FLOW · comentários do "site editável" (MQTT, mensagem retida = lista completa) */
+/* O Púlpito · comentários do "site editável" (MQTT, mensagem retida = lista completa) */
 (function(){
 'use strict';
 const C=window.PFCore;

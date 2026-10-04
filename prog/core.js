@@ -1,4 +1,4 @@
-/* PREACH FLOW · Programação — regras compartilhadas (palco e página pública) */
+/* O Púlpito · Programação — regras compartilhadas (palco e página pública) */
 (function(){
 'use strict';
 const C={};
