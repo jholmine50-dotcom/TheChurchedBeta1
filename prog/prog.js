@@ -28,19 +28,27 @@ async function urlOf(a){
 /* ---------------- dados ---------------- */
 function hoje(){const d=new Date();return d.getFullYear()+'-'+C.pad(d.getMonth()+1)+'-'+C.pad(d.getDate())}
 function exemplo(){
-  const n=Math.floor(C.nowMin()),r=m=>{const x=Math.round((n+m)/5)*5;return C.fmt(((x%1440)+1440)%1440)};
-  const it=(h,t,x)=>({id:C.uid(8),hora:h,dur:'',titulo:t,texto:x||'',estado:'auto'});
-  return {id:C.uid(8),titulo:'Culto de domingo',data:hoje(),exemplo:true,anexos:{},pub:null,
-    items:[it(r(-40),'Acolhida','Boas-vindas na porta e avisos rápidos.'),
-           it(r(-15),'Momento musical','Louvor com a banda. Anexe a letra com @ ou arraste um arquivo aqui.'),
-           it(r(5),'Leitura bíblica','Salmo 23'),
-           it(r(30),'Pregação','Mensagem principal.'),
-           it(r(75),'Encerramento','Oração final e avisos.')]};
+  const n=Math.floor(C.nowMin()),ini=Math.round((n-20)/5)*5;
+  return {id:C.uid(8),titulo:'Culto de domingo',data:hoje(),exemplo:true,auto:true,anexos:{},pub:null,items:C.fromModelo('domingo',C.fmt(ini))};
 }
+function guessTipo(t){
+  t=String(t||'').toLowerCase();
+  return /louv|m[uú]sic|canto|hino|adora/.test(t)?'louvor':/ora[cç]/.test(t)?'oracao':/prega|mensagem|palavra|serm/.test(t)?'palavra':
+    /leitura|salmo|vers/.test(t)?'leitura':/aviso|acolhida|boas/.test(t)?'avisos':/oferta|d[ií]zimo/.test(t)?'oferta':/ceia/.test(t)?'ceia':
+    /batism/.test(t)?'batismo':/interval|caf[eé]/.test(t)?'intervalo':'outro';
+}
+const ordered=()=>P.auto?P.items:C.sorted(P.items);
+function normalize(){
+  if(P.auto){const f=P.items.find(i=>C.toMin(i.hora)!=null);C.cascade(P.items,f?C.toMin(f.hora):Math.ceil(C.nowMin()/5)*5)}
+  else P.items=C.sorted(P.items);
+}
+function proxDomingo(){const d=new Date();d.setDate(d.getDate()+((7-d.getDay())%7));return d.getFullYear()+'-'+C.pad(d.getMonth()+1)+'-'+C.pad(d.getDate())}
 function load(){
   try{P=JSON.parse(localStorage.getItem(K()))}catch(e){P=null}
   if(!P||!Array.isArray(P.items))P=exemplo();
   P.anexos=P.anexos||{};
+  if(P.auto==null)P.auto=false;
+  P.items.forEach(i=>{if(!i.tipo)i.tipo=guessTipo(i.titulo)});
   try{cfg=Object.assign({},DEF_CFG,JSON.parse(localStorage.getItem(KC())||'{}'))}catch(e){cfg=Object.assign({},DEF_CFG)}
 }
 function save(){
@@ -67,7 +75,9 @@ function mount(){
       </div>
       <div class="pg-clock" aria-live="off"><span>AGORA</span><b id="pgNow">--:--</b></div>
       <div class="pg-actions">
-        <button class="pg-btn primary" id="pgAdd" type="button">+ ITEM</button>
+        <button class="pg-btn pg-help" id="pgHelp" type="button" aria-label="Como funciona esta aba" title="Como funciona">?</button>
+        <button class="pg-btn" id="pgModelos" type="button">MODELOS</button>
+        <button class="pg-btn primary" id="pgAdd" type="button">+ MOMENTO</button>
         <button class="pg-btn" id="pgAttach" type="button">ANEXAR</button>
         <div class="pg-menu-wrap"><button class="pg-btn" id="pgExportBtn" type="button" aria-haspopup="menu" aria-expanded="false">EXPORTAR ▾</button>
           <div class="pg-menu" id="pgExportMenu" role="menu" hidden>
@@ -79,12 +89,15 @@ function mount(){
           </div></div>
       </div>
     </header>
-    <div class="pg-banner" id="pgExample" hidden>Esta é uma programação de <b>exemplo</b>, com horários perto de agora. Edite à vontade ou <button type="button" id="pgNew">comece uma nova</button>.</div>
+    <div class="pg-banner" id="pgExample" hidden>Este é um <b>exemplo</b> com horários perto de agora, para você ver as cores mudando. Edite à vontade, <button type="button" id="pgNew">comece de um modelo</button> ou <button type="button" id="pgTour2">veja como funciona</button>.</div>
+    <section class="pg-sum" id="pgSum" aria-label="Resumo do culto"></section>
     <div class="pg-legend" aria-label="Legenda">
       ${['noar','prestes','agendado','passou','ignorado'].map(k=>`<span><i class="pg-dot st-${k}"></i>${C.STATES[k].label}</span>`).join('')}
+      <span class="pg-sp"></span>
+      <label class="pg-switch" id="pgCascade" title="Ligado: você informa só a duração de cada momento e os horários se ajustam sozinhos"><input type="checkbox" id="pgAuto" role="switch"><i aria-hidden="true"></i><span>Horários automáticos</span></label>
     </div>
     <div class="pg-body">
-      <main class="pg-list" id="pgList" aria-label="Itens da programação"></main>
+      <main class="pg-list" id="pgList" aria-label="Momentos da programação"></main>
       <aside class="pg-side">
         <section class="pg-box" id="pgPlayer" hidden>
           <h3>TOCANDO</h3>
@@ -94,7 +107,7 @@ function mount(){
         <section class="pg-box pg-lib" id="pgLibBox">
           <h3>ANEXOS <span id="pgLibN">0</span></h3>
           <div id="pgLib" class="pg-lib-list"></div>
-          <div class="pg-drophint">Arraste arquivos para qualquer lugar desta aba, ou digite <b>@</b> no texto de um item.</div>
+          <div class="pg-drophint">Arraste arquivos para qualquer lugar desta aba, ou digite <b>@</b> no texto de um momento.</div>
           <div class="pg-lib-add"><button class="pg-btn sm" id="pgAddLink" type="button">+ LINK DO CANVA</button><button class="pg-btn sm" id="pgAddText" type="button">+ TEXTO</button></div>
         </section>
         <section class="pg-box" id="pgPubBox" hidden>
@@ -121,38 +134,43 @@ function render(){
   $('pgChurch').textContent=sess.nome;
   $('pgExample').hidden=!P.exemplo;
   const list=$('pgList');
-  const items=C.sorted(P.items);
+  const items=ordered();
   const bn=byName();
+  $('pgAuto').checked=!!P.auto;
   list.innerHTML=items.map(it=>it.id===editing?editHTML(it):rowHTML(it,bn)).join('')+
-    `<button class="pg-addrow" type="button" id="pgAdd2">+ adicionar item</button><div class="pg-now" id="pgNowLine" hidden><span id="pgNowLbl"></span></div>`;
+    `<button class="pg-addrow" type="button" id="pgAdd2">+ adicionar momento</button><div class="pg-now" id="pgNowLine" hidden><span id="pgNowLbl"></span></div>`;
   $('pgAdd2').onclick=addItem;
   renderLib();renderPub();renderComments();
   tick(true);
   if(editing){const f=list.querySelector('.pg-edit [name=titulo]');if(f&&!f.value)f.focus()}
 }
 function rowHTML(it,bn){
-  const an=C.mentions(it.texto).map(n=>bn[n]).filter(Boolean);
-  return `<article class="pg-item" data-id="${it.id}" tabindex="0" aria-label="${C.esc((it.hora||'sem hora')+' '+it.titulo)}">
+  const an=C.mentions(it.texto).map(n=>bn[n]).filter(Boolean),t=C.tipo(it.tipo);
+  return `<article class="pg-item" data-id="${it.id}" tabindex="0" style="--c:${t.color}" aria-label="${C.esc((it.hora||'sem hora')+' '+t.label+' '+it.titulo)}">
     <div class="pg-time"><b>${C.esc(it.hora||'--:--')}</b><small class="pg-until"></small></div>
     <div class="pg-rail"><span class="pg-dot"></span></div>
     <div class="pg-card">
-      <div class="pg-top"><h4>${C.esc(it.titulo||'(sem título)')}</h4>
-        <button type="button" class="pg-tool" data-act="ign">${it.estado==='ignorado'?'REATIVAR':'IGNORAR'}</button>
-        <button type="button" class="pg-tool" data-act="edit">EDITAR</button><span class="pg-badge"></span></div>
+      <div class="pg-top"><span class="pg-tipo">${C.tipoIcon(it.tipo)}${t.label}</span><span class="pg-badge"></span>
+        <span class="pg-acts">${P.auto?`<button type="button" class="pg-tool" data-act="up" aria-label="Mover para cima" title="Mover para cima">▲</button><button type="button" class="pg-tool" data-act="down" aria-label="Mover para baixo" title="Mover para baixo">▼</button>`:''}<button type="button" class="pg-tool" data-act="ign" title="${it.estado==='ignorado'?'Volta a contar este momento':'Pula este momento (fica preto)'}">${it.estado==='ignorado'?'REATIVAR':'IGNORAR'}</button><button type="button" class="pg-tool" data-act="edit">EDITAR</button></span></div>
+      <h4>${C.esc(it.titulo||'(sem título)')}${+it.dur>0?`<small class="pg-dur">${C.dur(+it.dur)}</small>`:''}</h4>
       ${it.texto?`<div class="pg-text">${C.renderText(it.texto,bn)}</div>`:''}
       <div class="pg-bar"><i></i></div>
-      ${an.length?`<div class="pg-tools">${an.slice(0,4).map(a=>`<button type="button" class="pg-use" data-use="${a.id}" title="Usar agora no palco">▶ ${C.esc(a.nome)}</button>`).join('')}</div>`:''}
+      ${an.length?`<div class="pg-tools">${an.slice(0,4).map(a=>`<button type="button" class="pg-use" data-use="${a.id}" title="Mostrar/tocar agora no palco">▶ ${C.esc(a.nome)}</button>`).join('')}</div>`:''}
     </div></article>`;
 }
 function editHTML(it){
-  return `<article class="pg-item editing" data-id="${it.id}">
-    <div class="pg-time"><input type="time" name="hora" value="${C.esc(it.hora)}" aria-label="Horário"></div>
+  const first=ordered()[0]===it,ro=P.auto&&!first;
+  return `<article class="pg-item editing" data-id="${it.id}" style="--c:${C.tipo(it.tipo).color}">
+    <div class="pg-time">${ro?`<b>${C.esc(it.hora)}</b><small>automático</small>`:`<input type="time" name="hora" value="${C.esc(it.hora)}" aria-label="${P.auto?'Horário de início do culto':'Horário'}">${P.auto?'<small>início do culto</small>':''}`}</div>
     <div class="pg-rail"><span class="pg-dot"></span></div>
     <form class="pg-card pg-edit" autocomplete="off">
-      <input name="titulo" value="${C.esc(it.titulo)}" placeholder="Título (ex.: Momento musical, Culto, Pregação)" aria-label="Título" maxlength="80">
-      <div class="pg-ta-wrap"><textarea name="texto" rows="3" placeholder="O que vai acontecer… digite @ para anexar slide, imagem, vídeo, música ou texto" aria-label="Descrição">${C.esc(it.texto)}</textarea></div>
+      <div class="pg-tipos" role="radiogroup" aria-label="Tipo de momento">${Object.entries(C.TIPOS).map(([k,t])=>`<label class="pg-tp" style="--c:${t.color}"><input type="radio" name="tipo" value="${k}" ${it.tipo===k?'checked':''}>${C.tipoIcon(k)}<span>${t.label}</span></label>`).join('')}</div>
+      <input name="titulo" value="${C.esc(it.titulo)}" placeholder="Nome do momento (ex.: Louvor de abertura, Pregação, Santa Ceia)" aria-label="Nome do momento" maxlength="80">
+      <div class="pg-ta-wrap"><textarea name="texto" rows="3" placeholder="O que vai acontecer, quem conduz… (opcional)" aria-label="Descrição">${C.esc(it.texto)}</textarea></div>
+      <div class="pg-tip">Dica: digite <b>@</b> no texto para anexar slide, imagem, vídeo, música ou letra — ou arraste o arquivo para cá.</div>
       <div class="pg-edit-row">
-        <label>Duração <input type="number" name="dur" min="0" max="600" value="${C.esc(it.dur)}" placeholder="auto"> min</label>
+        <label>Duração <input type="number" name="dur" min="1" max="600" value="${C.esc(it.dur)}" placeholder="${P.auto?'10':'auto'}" ${P.auto?'required':''}> min</label>
+        ${P.auto?`<button type="button" class="pg-tool" data-act="up" aria-label="Mover para cima">▲</button><button type="button" class="pg-tool" data-act="down" aria-label="Mover para baixo">▼</button>`:''}
         <span class="pg-sp"></span>
         <button type="button" class="pg-tool danger" data-act="del">EXCLUIR</button>
         <button type="button" class="pg-tool" data-act="ign">${it.estado==='ignorado'?'REATIVAR':'IGNORAR'}</button>
@@ -173,7 +191,8 @@ function renderLib(){
 /* estados / linha do agora: roda a cada 10 s sem refazer a lista */
 function tick(force){
   if(!P)return;
-  const st=C.compute(P.items,{aviso:cfg.aviso,lastDur:cfg.lastDur});
+  const st=C.compute(P.items,{aviso:cfg.aviso,lastDur:cfg.lastDur,data:P.data});
+  renderSummary(st);
   $('pgNow').textContent=C.fmt(Math.floor(st.now));
   document.querySelectorAll('#pgList .pg-item').forEach(el=>{
     const s=st.map[el.dataset.id];if(!s)return;
@@ -184,7 +203,7 @@ function tick(force){
       if(s.state==='noar')t='NO AR · faltam '+Math.max(1,Math.ceil(s.end-st.now))+' min';
       else if(s.state==='prestes')t='EM '+Math.max(1,Math.ceil(s.inMin))+' MIN';
       else if(s.state==='ignorado')t='IGNORADO';
-      else if(s.state==='passou')t='FEITO';
+      else if(s.state==='passou')t=st.dayDiff<0?'':'FEITO';
       b.textContent=t;
     }
     const u=el.querySelector('.pg-until');if(u)u.textContent=s.end!=null?'até '+C.fmt(s.end):'';
@@ -193,7 +212,7 @@ function tick(force){
   // linha do "agora" entre os itens
   const line=$('pgNowLine');
   if(line){
-    const items=C.sorted(P.items).filter(i=>C.toMin(i.hora)!=null);
+    const items=(st.dayDiff===0?ordered():[]).filter(i=>C.toMin(i.hora)!=null);
     const els=items.map(i=>document.querySelector('#pgList .pg-item[data-id="'+i.id+'"]'));
     let top=null;
     for(let i=0;i<items.length;i++){
@@ -228,6 +247,108 @@ function tick(force){
   }
 }
 lastLive=undefined;
+
+/* ---------------- resumo do culto ---------------- */
+function renderSummary(st){
+  const box=$('pgSum');if(!box)return;
+  const items=ordered().filter(i=>C.toMin(i.hora)!=null);
+  if(!items.length){box._h='';box.innerHTML=`<div class="pg-sum-empty">Nenhum momento ainda. <button type="button" class="pg-btn sm primary" data-mod>COMEÇAR DE UM MODELO</button> <button type="button" class="pg-btn sm" data-add>+ MOMENTO</button></div>`;return}
+  const first=st.map[items[0].id].start,end=Math.max(...items.map(i=>st.map[i.id].end||0)),total=Math.max(1,end-first);
+  const act=items.filter(i=>i.estado!=='ignorado');
+  const segs=items.map(i=>{const s=st.map[i.id],t=C.tipo(i.tipo),w=i.estado==='ignorado'?0:Math.max(.4,(s.end-s.start)/total*100);
+    return w?`<button type="button" class="pg-seg st-${s.state}" style="flex:${w} 0 0;--c:${t.color}" data-goto="${i.id}" title="${C.esc(i.hora+' · '+t.label+' · '+(i.titulo||''))}" aria-label="${C.esc(i.hora+' '+(i.titulo||t.label))}"></button>`:''}).join('');
+  let now='',status='',btns='';
+  if(st.dayDiff>0)status=`<b class="pg-s-fut">Daqui a ${st.dayDiff} dia${st.dayDiff>1?'s':''}</b> — as bolinhas começam a mudar sozinhas no dia.`;
+  else if(st.dayDiff<0)status='<b>Esta programação já aconteceu.</b> Mude a data para usar de novo.';
+  else{
+    if(st.now>=first&&st.now<=end)now=`<i class="pg-seg-now" style="left:${((st.now-first)/total*100).toFixed(2)}%"></i>`;
+    if(st.live){const s=st.map[st.live.id];
+      status=`<span class="pg-dot st-noar"></span><b>Agora: ${C.esc(st.live.titulo||C.tipo(st.live.tipo).label)}</b> · faltam ${Math.max(1,Math.ceil(s.end-st.now))} min${st.next?` · depois: ${C.esc(st.next.titulo)}`:''}`;
+      btns=`<button type="button" class="pg-btn sm" data-live="mais" title="O culto atrasou: o momento atual ganha 5 minutos e o resto anda junto">+5 MIN</button><button type="button" class="pg-btn sm primary" data-live="prox" title="Encerra o momento atual agora e começa o próximo">PRÓXIMO AGORA ▸</button>`;
+    }else if(st.now<first)status=`Começa em <b>${C.dur(first-st.now)}</b>${st.next?` com ${C.esc(st.next.titulo)}`:''}.`;
+    else status='<b>O culto terminou.</b>';
+  }
+  const tipos=[...new Set(act.map(i=>i.tipo||'outro'))];
+  const html=`<div class="pg-sum-top"><div class="pg-sum-st">${status}</div><div class="pg-sum-b">${btns}</div></div>
+    <div class="pg-tl" role="group" aria-label="Linha do tempo do culto">${segs}${now}</div>
+    <div class="pg-sum-info"><span>Começa <b>${C.fmt(first)}</b></span><span>Termina <b>${C.fmt(end)}</b></span><span>Duração <b>${C.dur(total)}</b></span><span><b>${act.length}</b> momento${act.length===1?'':'s'}</span>
+      <span class="pg-sp"></span>${tipos.map(k=>`<span class="pg-sum-tp" style="--c:${C.tipo(k).color}"><i></i>${C.tipo(k).label}</span>`).join('')}</div>`;
+  if(box._h!==html){box._h=html;box.innerHTML=html}
+}
+function liveAdjust(kind){
+  const st=C.compute(P.items,{aviso:cfg.aviso,lastDur:cfg.lastDur,data:P.data}),live=st.live;if(!live)return;
+  const s=st.map[live.id];
+  if(kind==='mais'){
+    if(P.auto){live.dur=String(Math.round(s.end-s.start)+5)}
+    else{P.items.forEach(i=>{const t=C.toMin(i.hora);if(i!==live&&t!=null&&t>s.start)i.hora=C.fmt(t+5)});if(+live.dur>0)live.dur=String(+live.dur+5)}
+    toast('+5 min em "'+(live.titulo||'momento')+'" — o resto andou junto');
+  }else{
+    const el=Math.max(1,Math.floor(st.now-s.start));
+    if(P.auto)live.dur=String(el);
+    else{const delta=(s.start+el)-s.end;P.items.forEach(i=>{const t=C.toMin(i.hora);if(i!==live&&t!=null&&t>=s.end-1e-6)i.hora=C.fmt(t+delta)});if(+live.dur>0)live.dur=String(el)}
+    toast('Próximo momento começou');
+  }
+  P.exemplo=false;normalize();save();render();
+}
+function setAuto(on){
+  if(on===!!P.auto)return;
+  if(on){
+    const its=C.sorted(P.items),st=C.compute(its,{lastDur:cfg.lastDur});
+    its.forEach(i=>{const s=st.map[i.id];if(!(+i.dur>0)&&s.start!=null)i.dur=String(Math.max(1,Math.round(s.end-s.start)))});
+    P.items=its;
+  }
+  P.auto=on;normalize();save();render();
+  toast(on?'Horários automáticos: mude a duração e os horários seguintes se ajustam':'Horários livres: cada momento tem a sua própria hora');
+}
+async function openModelos(){
+  const ks=Object.keys(C.MODELOS);
+  const pr=dialog(`<h3>Começar de um modelo</h3><p class="pg-hint" style="margin-top:-6px">Escolha um ponto de partida — depois é só ajustar nomes e durações.</p>
+    <div class="pg-mods" role="radiogroup" aria-label="Modelos">${ks.map((k,i)=>{const m=C.MODELOS[k],tot=m.itens.reduce((a,x)=>a+x[2],0);
+      return `<label class="pg-mod"><input type="radio" name="m" value="${k}" ${i===0?'checked':''}><b>${m.nome}</b><small>${m.desc}</small><span>${m.itens.length} momento${m.itens.length>1?'s':''} · ${C.dur(tot)}</span>
+        <i class="pg-mod-bar">${m.itens.map(x=>`<em style="flex:${x[2]} 0 0;background:${C.tipo(x[1]).color}"></em>`).join('')}</i></label>`}).join('')}</div>
+    <div class="pg-mod-f"><label class="pg-lbl">TÍTULO<input name="t" value="${C.esc(C.MODELOS[ks[0]].nome)}"></label><label class="pg-lbl">DATA<input type="date" name="d" value="${proxDomingo()}"></label><label class="pg-lbl">COMEÇA ÀS<input type="time" name="h" value="${C.MODELOS[ks[0]].inicio}"></label></div>
+    ${P.items.length&&!P.exemplo?'<div class="pg-warn">Os momentos atuais serão trocados pelos do modelo. Os anexos continuam.</div>':''}`,
+    f=>({k:f.querySelector('[name=m]:checked').value,t:f.t.value.trim(),d:f.d.value,h:f.h.value}),'USAR ESTE MODELO');
+  const m=[...document.querySelectorAll('.pg-modal')].pop();
+  if(m){m.querySelector('.pg-modal-card').classList.add('wide');let touched=false;m.querySelector('[name=t]').addEventListener('input',()=>touched=true);
+    m.addEventListener('change',e=>{if(e.target.name!=='m')return;const md=C.MODELOS[e.target.value];if(!touched)m.querySelector('[name=t]').value=md.nome;m.querySelector('[name=h]').value=md.inicio})}
+  const r=await pr;if(!r)return;
+  P.items=C.fromModelo(r.k,r.h);P.titulo=r.t||C.MODELOS[r.k].nome;P.data=r.d||hoje();P.auto=true;P.exemplo=false;editing=null;
+  save();render();$('panel-prog').scrollTop=0;toast('Pronto! Clique num momento para ajustar');
+}
+/* ---------------- tour "como funciona" ---------------- */
+const TOUR=[
+  ['#pgSum','O culto inteiro numa barra','Cada cor é um tipo de momento (louvor, oração, pregação…) e a linha vermelha é o horário de agora. Clique numa cor para ir até aquele momento.'],
+  ['#pgList .pg-item','Cada cartão é um momento','A bolinha mostra o estado pelo relógio: <b style="color:#4ade80">verde</b> no ar, <b style="color:#fb923c">laranja</b> vai começar, <b style="color:#93c5fd">azul</b> agendado, <b style="color:#94a3b8">cinza</b> já foi e <b>preta</b> ignorado. Clique no cartão para editar.'],
+  ['#pgCascade','Horários automáticos','Ligado, você só diz quanto tempo cada momento dura e os horários se ajustam sozinhos. Atrasou durante o culto? Use <b>+5 MIN</b> ou <b>PRÓXIMO AGORA</b> no resumo lá em cima.'],
+  ['#pgLibBox','Anexos com @','Digite <b>@</b> no texto de um momento para anexar slide, imagem, vídeo, música ou letra — ou arraste o arquivo para esta aba. O <b>▶</b> mostra no palco.'],
+  ['#pgModelos','Modelos prontos','Comece de um culto de domingo, de oração, Santa Ceia ou casamento e ajuste o que precisar.'],
+  ['#pgExportBtn','Compartilhar','Gere PDF ou imagem para mandar no grupo, ou um link que passa sozinho na tela das pessoas (com comentários, se quiser).'],
+  ['#tsConfig','Configurações','Aqui você decide se o palco abre sozinho o slide ou a música quando um momento começa.']
+];
+function endTour(){document.querySelectorAll('.pg-tour,.pg-tour-hl').forEach(x=>x.remove())}
+function tourDone(){endTour();try{localStorage.setItem('pf.tour.prog','1')}catch(e){}}
+function startTour(i){
+  i=i||0;endTour();
+  const step=TOUR[i];if(!step)return tourDone();
+  const el=document.querySelector(step[0]);if(!el||!el.offsetParent)return startTour(i+1);
+  el.scrollIntoView({block:'center'});
+  setTimeout(()=>{
+    const r=el.getBoundingClientRect();
+    const hl=document.createElement('div');hl.className='pg-tour-hl';
+    Object.assign(hl.style,{left:(r.left-6)+'px',top:(r.top-6)+'px',width:(r.width+12)+'px',height:(Math.min(r.height,260)+12)+'px'});
+    const pop=document.createElement('div');pop.className='pg-tour';pop.setAttribute('role','dialog');pop.setAttribute('aria-label','Como funciona');
+    pop.innerHTML=`<small>PASSO ${i+1} DE ${TOUR.length}</small><b>${step[1]}</b><p>${step[2]}</p><div class="pg-tour-b"><button type="button" class="pg-btn sm" data-t="skip">PULAR</button><span class="pg-sp"></span>${i?'<button type="button" class="pg-btn sm" data-t="prev">VOLTAR</button>':''}<button type="button" class="pg-btn sm primary" data-t="next">${i===TOUR.length-1?'ENTENDI':'PRÓXIMO'}</button></div>`;
+    document.body.append(hl,pop);
+    const pw=Math.min(360,innerWidth-24);pop.style.width=pw+'px';
+    const bottom=r.top+Math.min(r.height,260);
+    let top=bottom+16;if(top+pop.offsetHeight>innerHeight-12)top=Math.max(12,r.top-16-pop.offsetHeight);
+    pop.style.left=Math.min(Math.max(12,r.left),innerWidth-pw-12)+'px';pop.style.top=top+'px';
+    pop.querySelector('[data-t=next]').focus();
+    pop.onclick=e=>{const t=e.target.closest('[data-t]');if(!t)return;const a=t.dataset.t;if(a==='next')startTour(i+1);else if(a==='prev')startTour(i-1);else tourDone()};
+    pop.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape')tourDone()});
+  },350);
+}
 
 /* ---------------- ação ao entrar no ar ---------------- */
 function anexosDo(it){const bn=byName();return C.mentions(it.texto).map(n=>bn[n]).filter(Boolean)}
@@ -299,22 +420,36 @@ function stopAudio(){
 
 /* ---------------- edição ---------------- */
 function addItem(){
-  const items=C.sorted(P.items),lastT=items.length?C.toMin(items[items.length-1].hora):null;
-  const h=lastT!=null?C.fmt(lastT+15):C.fmt(Math.ceil(C.nowMin()/5)*5);
-  const it={id:C.uid(8),hora:h,dur:'',titulo:'',texto:'',estado:'auto'};
-  P.items.push(it);P.exemplo=false;editing=it.id;save();render();
+  let it;
+  if(P.auto){it={id:C.uid(8),hora:'',dur:'10',tipo:'outro',titulo:'',texto:'',estado:'auto'};P.items.push(it)}
+  else{
+    const items=C.sorted(P.items),lastT=items.length?C.toMin(items[items.length-1].hora):null;
+    const h=lastT!=null?C.fmt(lastT+15):C.fmt(Math.ceil(C.nowMin()/5)*5);
+    it={id:C.uid(8),hora:h,dur:'',tipo:'outro',titulo:'',texto:'',estado:'auto'};P.items.push(it);
+  }
+  P.exemplo=false;editing=it.id;normalize();save();render();
+  const el=document.querySelector('#pgList .pg-item.editing');if(el)el.scrollIntoView({block:'center'});
 }
 function commitEdit(el){
   const it=P.items.find(i=>i.id===el.dataset.id);if(!it)return;
-  it.hora=el.querySelector('[name=hora]').value||it.hora;
+  const h=el.querySelector('[name=hora]');if(h&&h.value)it.hora=h.value;
+  const tp=el.querySelector('[name=tipo]:checked');if(tp)it.tipo=tp.value;
   it.titulo=el.querySelector('[name=titulo]').value.trim();
   it.texto=el.querySelector('[name=texto]').value;
-  const d=el.querySelector('[name=dur]').value;it.dur=d&&+d>0?String(Math.round(+d)):'';
+  const d=el.querySelector('[name=dur]').value;it.dur=d&&+d>0?String(Math.round(+d)):(P.auto?'10':'');
   P.exemplo=false;
+}
+function move(it,dir){
+  const i=P.items.indexOf(it),j=i+dir;if(i<0||j<0||j>=P.items.length)return;
+  const start=P.items[0]?P.items[0].hora:'';
+  P.items.splice(i,1);P.items.splice(j,0,it);
+  if(start&&P.items[0])P.items[0].hora=start; // o culto continua começando na mesma hora
+  normalize();save();render();
+  const el=document.querySelector('#pgList .pg-item[data-id="'+it.id+'"]');if(el)el.focus();
 }
 function finishEdit(){
   const el=document.querySelector('#pgList .pg-item.editing');if(el)commitEdit(el);
-  editing=null;hideAc();save();render();
+  editing=null;hideAc();normalize();save();render();
 }
 
 /* ---------------- @ autocompletar ---------------- */
@@ -359,10 +494,10 @@ function pickFiles(){
 }
 
 /* ---------------- anexos: nomear ---------------- */
-function dialog(html,onOk){
+function dialog(html,onOk,okLabel){
   return new Promise(res=>{
     const d=document.createElement('div');d.className='pg-modal';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');
-    d.innerHTML=`<form class="pg-modal-card">${html}<div class="pg-modal-btns"><button type="button" class="pg-btn" data-x>CANCELAR</button><button type="submit" class="pg-btn primary">OK</button></div></form>`;
+    d.innerHTML=`<form class="pg-modal-card">${html}<div class="pg-modal-btns"><button type="button" class="pg-btn" data-x>CANCELAR</button><button type="submit" class="pg-btn primary">${okLabel||'OK'}</button></div></form>`;
     document.body.appendChild(d);
     const f=d.querySelector('form'),first=f.querySelector('input,textarea');if(first){first.focus();first.select&&first.select()}
     const close=v=>{d.remove();res(v)};
@@ -465,7 +600,7 @@ function wireDrop(){
 function pubPayload(){
   const an={};
   Object.values(P.anexos).forEach(a=>{an[a.id]={id:a.id,nome:a.nome,kind:a.kind,size:a.size||0,url:a.url||undefined,texto:a.kind==='texto'&&(a.texto||'').length<20000?a.texto:undefined}});
-  return {v:1,igreja:sess.nome,titulo:P.titulo,data:P.data,items:P.items.map(i=>({id:i.id,hora:i.hora,dur:i.dur,titulo:i.titulo,texto:i.texto,estado:i.estado})),anexos:an,cfg:{aviso:cfg.aviso,lastDur:cfg.lastDur},at:Date.now()};
+  return {v:1,igreja:sess.nome,titulo:P.titulo,data:P.data,items:ordered().map(i=>({id:i.id,hora:i.hora,dur:i.dur,tipo:i.tipo,titulo:i.titulo,texto:i.texto,estado:i.estado})),anexos:an,cfg:{aviso:cfg.aviso,lastDur:cfg.lastDur},at:Date.now()};
 }
 function ensureClient(){
   if(client||!P.pub)return;
@@ -545,13 +680,13 @@ async function exportImage(fmt){
     if(!window.htmlToImage)await loadScript('prog/vendor/html-to-image.js');
     if(fmt==='pdf'&&!window.PDFLib)await loadScript('prog/vendor/pdf-lib.min.js');
   }catch(e){toast(e.message);return}
-  const st=C.compute(P.items,{aviso:cfg.aviso,lastDur:cfg.lastDur});
+  const st=C.compute(P.items,{aviso:cfg.aviso,lastDur:cfg.lastDur,data:P.data});
   const bn=byName();
   const el=document.createElement('div');el.className='pg-print';
   const dataTxt=P.data?new Date(P.data+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'';
   el.innerHTML=`<div class="pp-h"><small>${C.esc(sess.nome)}</small><h1>${C.esc(P.titulo)}</h1><span>${C.esc(dataTxt)}</span></div>
-    ${C.sorted(P.items).map(it=>{const s=st.map[it.id];return `<div class="pp-it st-${s.state}"><div class="pp-t">${C.esc(it.hora||'--:--')}</div><span class="pg-dot st-${s.state}"></span>
-      <div class="pp-c"><b>${C.esc(it.titulo)}</b>${it.estado==='ignorado'?' <em>(não acontecerá)</em>':''}${it.texto?`<p>${C.renderText(it.texto,bn).replace(/<svg[\s\S]*?<\/svg>/g,'')}</p>`:''}</div></div>`}).join('')}
+    ${ordered().map(it=>{const s=st.map[it.id],tp=C.tipo(it.tipo);return `<div class="pp-it st-${s.state}" style="--c:${tp.color}"><div class="pp-t">${C.esc(it.hora||'--:--')}</div><span class="pg-dot st-${s.state}"></span>
+      <div class="pp-c"><small class="pp-tp">${tp.label}${+it.dur>0?' · '+C.dur(+it.dur):''}</small><b>${C.esc(it.titulo)}</b>${it.estado==='ignorado'?' <em>(não acontecerá)</em>':''}${it.texto?`<p>${C.renderText(it.texto,bn).replace(/<svg[\s\S]*?<\/svg>/g,'')}</p>`:''}</div></div>`}).join('')}
     <div class="pp-f">Gerado com O Púlpito · ${new Date().toLocaleString('pt-BR')}</div>`;
   document.body.appendChild(el);
   const name=(C.cleanName(P.titulo)||'programacao');
@@ -597,7 +732,7 @@ function openConfig(){
     <div class="cf-sec"><h4>DADOS</h4>
       <div class="cf-row"><span>Backup da programação<small>sem os arquivos (eles ficam neste computador)</small></span>
         <span class="cf-btns"><button type="button" class="pg-btn sm" id="cfExp">BAIXAR</button><button type="button" class="pg-btn sm" id="cfImp">RESTAURAR</button></span></div>
-      <div class="cf-row"><span>Nova programação<small>apaga os itens atuais (mantém os anexos)</small></span><button type="button" class="pg-btn sm danger" id="cfNew">NOVA</button></div>
+      <div class="cf-row"><span>Nova programação<small>começar de um modelo (mantém os anexos)</small></span><button type="button" class="pg-btn sm danger" id="cfNew">NOVA</button></div>
     </div>
     <div class="cf-sec"><h4>CONTA</h4>
       <div class="cf-row"><span>Igreja<small>login simulado neste navegador (desenvolvimento)</small></span><b>${C.esc(sess.nome)}</b></div>
@@ -614,7 +749,7 @@ function openConfig(){
   d.querySelector('[data-x]').onclick=close;d.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape')close()});
   d.addEventListener('click',e=>{if(e.target===d)close()});
   q('cfOut').onclick=()=>PFAuth.sair();
-  q('cfNew').onclick=()=>{if(!confirmar(q('cfNew')))return;P.items=[];P.exemplo=false;save();render();close();addItem()};
+  q('cfNew').onclick=()=>{close();openModelos()};
   q('cfExp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({programacao:P,config:cfg},null,2)],{type:'application/json'}));a.download='programacao-backup.json';a.click()};
   q('cfImp').onclick=()=>q('cfFile').click();
   q('cfFile').onchange=async()=>{try{const o=JSON.parse(await q('cfFile').files[0].text());if(!o.programacao||!Array.isArray(o.programacao.items))throw new Error('arquivo inválido');
@@ -633,7 +768,9 @@ function wire(){
   $('pgTitle').addEventListener('input',e=>{P.titulo=e.target.value;P.exemplo=false;save()});
   $('pgDate').addEventListener('change',e=>{P.data=e.target.value;save()});
   $('pgAdd').onclick=addItem;
-  $('pgNew').onclick=()=>{P.items=[];P.exemplo=false;save();render();addItem()};
+  $('pgNew').onclick=openModelos;$('pgTour2').onclick=()=>startTour(0);
+  $('pgModelos').onclick=openModelos;$('pgHelp').onclick=()=>startTour(0);
+  $('pgAuto').addEventListener('change',e=>setAuto(e.target.checked));
   $('pgAttach').onclick=async()=>{for(const f of await pickFiles())await addFile(f)};
   $('pgAddLink').onclick=addLink;$('pgAddText').onclick=addText;
   $('pgPlStop').onclick=stopAudio;
@@ -650,6 +787,10 @@ function wire(){
   });
   const wrap=$('pgWrap');
   wrap.addEventListener('click',e=>{
+    const lv=e.target.closest('[data-live]');if(lv){liveAdjust(lv.dataset.live);return}
+    const gt=e.target.closest('[data-goto]');if(gt){const el=document.querySelector('#pgList .pg-item[data-id="'+gt.dataset.goto+'"]');if(el){el.scrollIntoView({block:'center',behavior:'smooth'});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1400);el.focus({preventScroll:true})}return}
+    if(e.target.closest('[data-mod]')){openModelos();return}
+    if(e.target.closest('[data-add]')){addItem();return}
     const chip=e.target.closest('.pf-chip[data-anexo]');if(chip){e.stopPropagation();const a=P.anexos[chip.dataset.anexo];if(a)preview(a).then(()=>{});return}
     const u=e.target.closest('[data-use]');if(u){use(P.anexos[u.dataset.use]);return}
     const cp=e.target.closest('[data-copy]');if(cp){navigator.clipboard.writeText(cp.dataset.copy).then(()=>toast('Link copiado'),()=>{});return}
@@ -661,8 +802,9 @@ function wire(){
     const act=e.target.closest('[data-act]');
     if(item&&act){
       const it=P.items.find(i=>i.id===item.dataset.id);if(!it)return;
-      if(act.dataset.act==='ign'){if(item.classList.contains('editing'))commitEdit(item);it.estado=it.estado==='ignorado'?'auto':'ignorado';save();render();return}
-      if(act.dataset.act==='del'){if(!confirmar(act))return;P.items=P.items.filter(i=>i!==it);editing=null;save();render();return}
+      if(act.dataset.act==='ign'){if(item.classList.contains('editing'))commitEdit(item);it.estado=it.estado==='ignorado'?'auto':'ignorado';normalize();save();render();return}
+      if(act.dataset.act==='up'||act.dataset.act==='down'){if(item.classList.contains('editing'))commitEdit(item);move(it,act.dataset.act==='up'?-1:1);return}
+      if(act.dataset.act==='del'){if(!confirmar(act))return;const first=P.items[0]===it&&P.items[1];if(first)P.items[1].hora=it.hora;P.items=P.items.filter(i=>i!==it);editing=null;normalize();save();render();return}
       if(act.dataset.act==='edit'){if(editing)finishEdit();editing=it.id;render();return}
     }
     if(item&&!item.classList.contains('editing')&&!e.target.closest('button,a')){if(editing)finishEdit();editing=item.dataset.id;render()}
@@ -708,7 +850,7 @@ async function init(s){
   if(P.pub)ensureClient();
   setInterval(()=>tick(),10000);
   // o relógio da aba e os estados também mudam quando a aba é aberta
-  new MutationObserver(()=>{if(document.body.classList.contains('tab-prog'))tick(true)}).observe(document.body,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(()=>{if(document.body.classList.contains('tab-prog')){tick(true);let d=null;try{d=localStorage.getItem('pf.tour.prog')}catch(e){}if(!d&&!document.querySelector('.pg-tour')&&!document.querySelector('#pfAuth')){try{localStorage.setItem('pf.tour.prog','1')}catch(e){}startTour(0)}}}).observe(document.body,{attributes:true,attributeFilter:['class']});
   const cb=$('tsConfig');if(cb)cb.onclick=openConfig;
   const ch=$('tsChurch');if(ch){ch.textContent=s.nome;ch.onclick=openConfig}
 }

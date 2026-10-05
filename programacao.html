@@ -53,7 +53,8 @@ header.top{position:sticky;top:10px;z-index:20;display:flex;align-items:center;g
 .rail{position:relative;align-self:stretch;display:flex;justify-content:center}
 .rail::before{content:"";position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.1)}
 .rail .dot{position:relative;margin-top:16px}
-.card{margin:6px 0;padding:12px 14px;border-radius:18px;border:1px solid rgba(255,255,255,.07);background:rgba(11,14,20,.6);min-width:0}
+.card .tp{display:inline-flex;align-items:center;gap:5px;font:800 10px/1 var(--font);letter-spacing:1.2px;text-transform:uppercase;color:var(--c);margin-bottom:5px}.card .tp svg{width:13px;height:13px}
+.card{border-left:4px solid var(--c,#cbd5e1)!important;margin:6px 0;padding:12px 14px;border-radius:18px;border:1px solid rgba(255,255,255,.07);background:rgba(11,14,20,.6);min-width:0}
 .st-noar .card{border-color:rgba(74,222,128,.55);background:linear-gradient(180deg,rgba(74,222,128,.1),rgba(74,222,128,.02)),rgba(11,14,20,.7)}
 .st-prestes .card{border-color:rgba(251,146,60,.45)}
 .st-ignorado .card{opacity:.5}.st-ignorado h3{text-decoration:line-through}
@@ -167,8 +168,8 @@ function render(){
   $('vData').textContent=D.data?new Date(D.data+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}):'';
   $('vLegend').innerHTML=['noar','prestes','agendado','passou','ignorado'].map(k=>`<span><i class="dot st-${k}"></i>${C.STATES[k].label}</span>`).join('');
   const bn=byName();
-  $('vList').innerHTML=C.sorted(D.items).map(it=>`<article class="it" data-id="${C.esc(it.id)}"><div class="tm">${C.esc(it.hora||'--:--')}<small></small></div><div class="rail"><span class="dot"></span></div>
-    <div class="card"><div class="h"><h3>${C.esc(it.titulo||'')}</h3><span class="badge"></span></div>${it.texto?`<div class="tx">${C.renderText(it.texto,bn)}</div>`:''}</div></article>`).join('')+'<div class="now" id="vNowL" hidden><span></span></div>';
+  $('vList').innerHTML=C.sorted(D.items).map(it=>`<article class="it" data-id="${C.esc(it.id)}" style="--c:${C.tipo(it.tipo).color}"><div class="tm">${C.esc(it.hora||'--:--')}<small></small></div><div class="rail"><span class="dot"></span></div>
+    <div class="card"><div class="tp">${C.tipoIcon(it.tipo)}${C.tipo(it.tipo).label}</div><div class="h"><h3>${C.esc(it.titulo||'')}</h3><span class="badge"></span></div>${it.texto?`<div class="tx">${C.renderText(it.texto,bn)}</div>`:''}</div></article>`).join('')+'<div class="now" id="vNowL" hidden><span></span></div>';
   if(editable){
     $('vGrid').classList.add('edit');$('vSide').hidden=false;
     const sel=$('cItem'),cur=sel.value;
@@ -179,7 +180,7 @@ function render(){
 }
 function tick(force){
   if(!D)return;
-  const st=C.compute(D.items,D.cfg||{});
+  const st=C.compute(D.items,Object.assign({},D.cfg||{},{data:D.data}));
   $('vNow').textContent=C.fmt(Math.floor(st.now));
   document.querySelectorAll('.it').forEach(el=>{
     const s=st.map[el.dataset.id];if(!s)return;el.className='it st-'+s.state;
@@ -187,14 +188,16 @@ function tick(force){
     el.querySelector('.tm small').textContent=s.end!=null?'até '+C.fmt(s.end):'';
   });
   const bn=byName(),h=$('vHero');
-  if(st.live){const s=st.map[st.live.id];
+  const its=C.sorted(D.items).filter(i=>C.toMin(i.hora)!=null);
+  if(st.dayDiff!==0&&its.length){h.className='hero glass idle';h.innerHTML=st.dayDiff>0?`<div class="lbl">EM ${st.dayDiff} DIA${st.dayDiff>1?'S':''}</div><h2>Começa às ${C.esc(its[0].hora)}</h2><div class="meta">${its.length} momentos · a programação passa sozinha no dia</div>`:'<div class="lbl">PROGRAMAÇÃO</div><h2>Este culto já aconteceu</h2>'}
+  else if(st.live){const s=st.map[st.live.id];
     h.className='hero glass';h.innerHTML=`<div class="lbl"><i class="dot st-noar"></i>NO AR AGORA</div><h2>${C.esc(st.live.titulo)}</h2>${st.live.texto?`<div class="tx">${C.renderText(st.live.texto,bn)}</div>`:''}
       <div class="bar"><i style="width:${Math.round(s.progress*100)}%"></i></div><div class="meta">${C.esc(st.live.hora)} – ${C.fmt(s.end)} · faltam ${Math.max(1,Math.ceil(s.end-st.now))} min${st.next?' · depois: '+C.esc(st.next.titulo)+' às '+C.esc(st.next.hora):''}</div>`;
   }else if(st.next){
     h.className='hero glass idle';h.innerHTML=`<div class="lbl"><i class="dot st-${st.map[st.next.id].state}"></i>A SEGUIR · ${C.esc(st.next.hora)}</div><h2>${C.esc(st.next.titulo)}</h2><div class="meta">começa em ${Math.max(1,Math.ceil(st.map[st.next.id].inMin))} min</div>`;
   }else{h.className='hero glass idle';h.innerHTML='<div class="lbl">PROGRAMAÇÃO</div><h2>Nada acontecendo agora</h2>'}
   // linha do agora
-  const items=C.sorted(D.items).filter(i=>C.toMin(i.hora)!=null),els=items.map(i=>document.querySelector('.it[data-id="'+CSS.escape(i.id)+'"]'));
+  const items=(st.dayDiff===0?C.sorted(D.items):[]).filter(i=>C.toMin(i.hora)!=null),els=items.map(i=>document.querySelector('.it[data-id="'+CSS.escape(i.id)+'"]'));
   let top=null;
   for(let i=0;i<items.length;i++){const a=C.toMin(items[i].hora),b=i+1<items.length?C.toMin(items[i+1].hora):st.map[items[i].id].end;
     if(st.now>=a&&st.now<b&&els[i]){const y1=els[i].offsetTop+12,y2=i+1<items.length&&els[i+1]?els[i+1].offsetTop+12:els[i].offsetTop+els[i].offsetHeight;top=y1+(y2-y1)*((st.now-a)/Math.max(1e-6,b-a));break}}
