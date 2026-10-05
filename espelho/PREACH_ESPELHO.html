@@ -641,7 +641,8 @@ function roomFound(msg){
   if(msg&&msg.src&&!peers[msg.src])peers[msg.src]={role:'palco',name:'PC',seen:Date.now(),offline:false};
   try{renderStatus()}catch(e){}
   roomOk=true;clearTimeout(roomTimer);clearTimeout(netTimer);
-  roomHide();toast('conectado à sala '+code);log('net','sala '+code+' encontrada');
+  roomHide();toast('conectado à sala '+code);
+  if(window.PFTour)PFTour.controle('');log('net','sala '+code+' encontrada');
 }
 function roomStart(){
   if(role!=='controle')return;
@@ -1332,5 +1333,6 @@ function init(){
 }
 init();
 </script>
+<script src="../prog/tour.js"></script>
 </body>
 </html>

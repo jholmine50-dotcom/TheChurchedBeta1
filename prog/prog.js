@@ -316,39 +316,18 @@ async function openModelos(){
   P.items=C.fromModelo(r.k,r.h);P.titulo=r.t||C.MODELOS[r.k].nome;P.data=r.d||hoje();P.auto=true;P.exemplo=false;editing=null;
   save();render();$('panel-prog').scrollTop=0;toast('Pronto! Clique num momento para ajustar');
 }
-/* ---------------- tour "como funciona" ---------------- */
+/* ---------------- tour "como funciona" (usa prog/tour.js) ---------------- */
 const TOUR=[
-  ['#pgSum','O culto inteiro numa barra','Cada cor é um tipo de momento (louvor, oração, pregação…) e a linha vermelha é o horário de agora. Clique numa cor para ir até aquele momento.'],
-  ['#pgList .pg-item','Cada cartão é um momento','A bolinha mostra o estado pelo relógio: <b style="color:#4ade80">verde</b> no ar, <b style="color:#fb923c">laranja</b> vai começar, <b style="color:#93c5fd">azul</b> agendado, <b style="color:#94a3b8">cinza</b> já foi e <b>preta</b> ignorado. Clique no cartão para editar.'],
-  ['#pgCascade','Horários automáticos','Ligado, você só diz quanto tempo cada momento dura e os horários se ajustam sozinhos. Atrasou durante o culto? Use <b>+5 MIN</b> ou <b>PRÓXIMO AGORA</b> no resumo lá em cima.'],
-  ['#pgLibBox','Anexos com @','Digite <b>@</b> no texto de um momento para anexar slide, imagem, vídeo, música ou letra — ou arraste o arquivo para esta aba. O <b>▶</b> mostra no palco.'],
-  ['#pgModelos','Modelos prontos','Comece de um culto de domingo, de oração, Santa Ceia ou casamento e ajuste o que precisar.'],
-  ['#pgExportBtn','Compartilhar','Gere PDF ou imagem para mandar no grupo, ou um link que passa sozinho na tela das pessoas (com comentários, se quiser).'],
-  ['#tsConfig','Configurações','Aqui você decide se o palco abre sozinho o slide ou a música quando um momento começa.']
+  {el:'#pgSum',t:'O culto inteiro numa barra',d:'Cada cor é um tipo de momento (louvor, oração, pregação…) e a linha vermelha é o horário de agora. Clique numa cor para ir até aquele momento.'},
+  {el:'#pgList .pg-item',t:'Cada cartão é um momento',d:'A bolinha mostra o estado pelo relógio: <b style="color:#4ade80">verde</b> no ar, <b style="color:#fb923c">laranja</b> vai começar, <b style="color:#93c5fd">azul</b> agendado, <b style="color:#94a3b8">cinza</b> já foi e <b>preta</b> ignorado. Clique no cartão para editar.'},
+  {el:'#pgCascade',t:'Horários automáticos',d:'Ligado, você só diz quanto tempo cada momento dura e os horários se ajustam sozinhos. Atrasou durante o culto? Use <b>+5 MIN</b> ou <b>PRÓXIMO AGORA</b> no resumo lá em cima.'},
+  {el:'#pgLibBox',t:'Anexos com @',d:'Digite <b>@</b> no texto de um momento para anexar slide, imagem, vídeo, música ou letra — ou arraste o arquivo para esta aba. O <b>▶</b> mostra no palco.'},
+  {el:'#pgModelos',t:'Modelos prontos',d:'Comece de um culto de domingo, de oração, Santa Ceia ou casamento e ajuste o que precisar.'},
+  {el:'#pgExportBtn',t:'Compartilhar',d:'Gere PDF ou imagem para mandar no grupo, ou um link que passa sozinho na tela das pessoas (com comentários, se quiser).'},
+  {el:'#tsConfig',t:'Configurações',d:'Aqui você decide se o palco abre sozinho o slide ou a música quando um momento começa.'}
 ];
-function endTour(){document.querySelectorAll('.pg-tour,.pg-tour-hl').forEach(x=>x.remove())}
-function tourDone(){endTour();try{localStorage.setItem('pf.tour.prog','1')}catch(e){}}
-function startTour(i){
-  i=i||0;endTour();
-  const step=TOUR[i];if(!step)return tourDone();
-  const el=document.querySelector(step[0]);if(!el||!el.offsetParent)return startTour(i+1);
-  el.scrollIntoView({block:'center'});
-  setTimeout(()=>{
-    const r=el.getBoundingClientRect();
-    const hl=document.createElement('div');hl.className='pg-tour-hl';
-    Object.assign(hl.style,{left:(r.left-6)+'px',top:(r.top-6)+'px',width:(r.width+12)+'px',height:(Math.min(r.height,260)+12)+'px'});
-    const pop=document.createElement('div');pop.className='pg-tour';pop.setAttribute('role','dialog');pop.setAttribute('aria-label','Como funciona');
-    pop.innerHTML=`<small>PASSO ${i+1} DE ${TOUR.length}</small><b>${step[1]}</b><p>${step[2]}</p><div class="pg-tour-b"><button type="button" class="pg-btn sm" data-t="skip">PULAR</button><span class="pg-sp"></span>${i?'<button type="button" class="pg-btn sm" data-t="prev">VOLTAR</button>':''}<button type="button" class="pg-btn sm primary" data-t="next">${i===TOUR.length-1?'ENTENDI':'PRÓXIMO'}</button></div>`;
-    document.body.append(hl,pop);
-    const pw=Math.min(360,innerWidth-24);pop.style.width=pw+'px';
-    const bottom=r.top+Math.min(r.height,260);
-    let top=bottom+16;if(top+pop.offsetHeight>innerHeight-12)top=Math.max(12,r.top-16-pop.offsetHeight);
-    pop.style.left=Math.min(Math.max(12,r.left),innerWidth-pw-12)+'px';pop.style.top=top+'px';
-    pop.querySelector('[data-t=next]').focus();
-    pop.onclick=e=>{const t=e.target.closest('[data-t]');if(!t)return;const a=t.dataset.t;if(a==='next')startTour(i+1);else if(a==='prev')startTour(i-1);else tourDone()};
-    pop.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape')tourDone()});
-  },350);
-}
+function startTour(){if(window.PFTour)PFTour.start('prog',TOUR,'Programação')}
+function tour(force){if(!window.PFTour)return;if(force)startTour();else PFTour.auto('prog',TOUR,'Programação',700)}
 
 /* ---------------- ação ao entrar no ar ---------------- */
 function anexosDo(it){const bn=byName();return C.mentions(it.texto).map(n=>bn[n]).filter(Boolean)}
@@ -768,8 +747,8 @@ function wire(){
   $('pgTitle').addEventListener('input',e=>{P.titulo=e.target.value;P.exemplo=false;save()});
   $('pgDate').addEventListener('change',e=>{P.data=e.target.value;save()});
   $('pgAdd').onclick=addItem;
-  $('pgNew').onclick=openModelos;$('pgTour2').onclick=()=>startTour(0);
-  $('pgModelos').onclick=openModelos;$('pgHelp').onclick=()=>startTour(0);
+  $('pgNew').onclick=openModelos;$('pgTour2').onclick=startTour;
+  $('pgModelos').onclick=openModelos;$('pgHelp').onclick=startTour;
   $('pgAuto').addEventListener('change',e=>setAuto(e.target.checked));
   $('pgAttach').onclick=async()=>{for(const f of await pickFiles())await addFile(f)};
   $('pgAddLink').onclick=addLink;$('pgAddText').onclick=addText;
@@ -850,10 +829,10 @@ async function init(s){
   if(P.pub)ensureClient();
   setInterval(()=>tick(),10000);
   // o relógio da aba e os estados também mudam quando a aba é aberta
-  new MutationObserver(()=>{if(document.body.classList.contains('tab-prog')){tick(true);let d=null;try{d=localStorage.getItem('pf.tour.prog')}catch(e){}if(!d&&!document.querySelector('.pg-tour')&&!document.querySelector('#pfAuth')){try{localStorage.setItem('pf.tour.prog','1')}catch(e){}startTour(0)}}}).observe(document.body,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(()=>{if(document.body.classList.contains('tab-prog'))tick(true)}).observe(document.body,{attributes:true,attributeFilter:['class']});
   const cb=$('tsConfig');if(cb)cb.onclick=openConfig;
   const ch=$('tsChurch');if(ch){ch.textContent=s.nome;ch.onclick=openConfig}
 }
-window.PFProg={init,closeMedia,mediaOn:()=>document.body.classList.contains('pf-media-on'),use,openConfig,_state:()=>({P,cfg,comments})};
+window.PFProg={tour,init,closeMedia,mediaOn:()=>document.body.classList.contains('pf-media-on'),use,openConfig,_state:()=>({P,cfg,comments})};
 if(window.PFAuth)PFAuth.ready.then(s=>{if(s&&document.getElementById('panel-prog'))init(s)});
 })();
